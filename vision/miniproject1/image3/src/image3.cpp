@@ -3,7 +3,7 @@
     miniproject image3
 */
 
-#include "../src/functions.h"
+#include "../../lib/functions.h"
 
 using namespace cv;
 using namespace std;

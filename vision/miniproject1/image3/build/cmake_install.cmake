@@ -1,4 +1,4 @@
-# Install script for directory: /home/student/Downloads/vision/miniproject/image3
+# Install script for directory: /home/student/Downloads/vision/ROVI01/vision/miniproject1/image3
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/student/Downloads/vision/miniproject/image3/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/student/Downloads/vision/ROVI01/vision/miniproject1/image3/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
