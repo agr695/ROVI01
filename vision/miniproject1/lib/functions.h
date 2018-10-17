@@ -213,3 +213,62 @@ Mat intesity_transf(Mat img, int intens_inc) {
 
     return trans;
 }
+
+
+
+
+void dftshift(cv::Mat& mag)
+{
+    int cx = mag.cols / 2;
+    int cy = mag.rows / 2;
+
+    cv::Mat tmp;
+    cv::Mat q0(mag, cv::Rect(0, 0, cx, cy));
+    cv::Mat q1(mag, cv::Rect(cx, 0, cx, cy));
+    cv::Mat q2(mag, cv::Rect(0, cy, cx, cy));
+    cv::Mat q3(mag, cv::Rect(cx, cy, cx, cy));
+
+    q0.copyTo(tmp);
+    q3.copyTo(q0);
+    tmp.copyTo(q3);
+
+    q1.copyTo(tmp);
+    q2.copyTo(q1);
+    tmp.copyTo(q2);
+}
+
+
+Mat remove_ellipse(Mat mag,int size,int rad){
+  Mat ret=mag.clone();
+  int N=ret.rows;
+  int M=ret.cols;
+
+
+  ellipse( ret,
+          Point(M/2,N/2),
+          Size(rad,rad/3),
+          -45,
+          0,
+          360,
+          Scalar(0,0,0),
+          size);
+
+  return ret;
+
+}
+
+
+Mat remove_circunference(Mat mag,int size,int rad){
+  Mat ret=mag.clone();
+  int N=ret.rows;
+  int M=ret.cols;
+
+  circle( ret,
+          Point(M/2,N/2),
+          rad,
+          Scalar(0,0,0),
+          size);
+
+  return ret;
+
+}
