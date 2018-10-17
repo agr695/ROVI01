@@ -149,6 +149,34 @@ Mat contraharmonic_filter(Mat img, int size, double Q) {
     return filtered;
 }
 
+Mat harmonic_filter(Mat img, int size) {
+    Mat filtered = img.clone();
+    int i, j, k, l;
+    double cont = 0;
+    unsigned char value;
+    int N = img.rows - (size - 1) / 2;
+    int M = img.cols - (size - 1) / 2;
+
+    for (i = (size - 1) / 2; i < M; i++) {
+        for (j = (size - 1) / 2; j < N; j++) {
+            for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
+                for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
+                    if (img.at<uchar>(Point(i + k, j + l)) == 0) {
+                        cont += 100.0;
+                    }
+                    else {
+                        cont += 1.0 / img.at<uchar>(Point(i + k, j + l));
+                    }
+                }
+            }
+            value = static_cast<unsigned char>((size * size)/ cont);
+            filtered.at<uchar>(Point(i, j)) = value;
+            cont = 0;
+        }
+    }
+    return filtered;
+}
+
 Mat geom_mean_filter(Mat img, int size) {
     Mat filtered = img.clone();
     int i, j, k, l;
