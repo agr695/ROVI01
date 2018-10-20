@@ -214,9 +214,6 @@ Mat intesity_transf(Mat img, int intens_inc) {
     return trans;
 }
 
-
-
-
 void dftshift(cv::Mat& mag)
 {
     int cx = mag.cols / 2;
@@ -263,4 +260,64 @@ Mat remove_point(Mat mag,int rad, int center_x, int center_y){
 
   return ret;
 
+}
+
+
+Mat laplacian_filter(Mat img) {
+    Mat filtered = img.clone();
+    int i, j, k, l;
+    int cont = 0;
+    int size=3;
+    unsigned char value;
+    int N = img.rows - (size - 1) / 2;
+    int M = img.cols - (size - 1) / 2;
+
+    for (i = (size - 1) / 2; i < M; i++) {
+        for (j = (size - 1) / 2; j < N; j++) {
+            for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
+                for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
+                    if(k==0 && l==0){
+                      cont+=9 * img.at<uchar>(Point(i + k, j + l));
+                    }
+                    else{
+                      cont-=img.at<uchar>(Point(i + k, j + l));
+                    }
+                }
+            }
+            value=static_cast<unsigned char> (cont);
+            filtered.at<uchar>(Point(i, j)) = value;
+            cont=0;
+        }
+    }
+    return filtered;
+}
+
+
+Mat sobel_filter(Mat img) {
+  Mat filtered = img.clone();
+  int i, j, k, l;
+  int cont = 0;
+  int size=3;
+  unsigned char value;
+  int N = img.rows - (size - 1) / 2;
+  int M = img.cols - (size - 1) / 2;
+
+  for (i = (size - 1) / 2; i < M; i++) {
+    for (j = (size - 1) / 2; j < N; j++) {
+      for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
+        for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
+          if(l==0){
+            cont+=k*2*img.at<uchar>(Point(i + k, j + l));
+          }
+          else{
+            cont+=k*img.at<uchar>(Point(i + k, j + l));
+          }
+        }
+      }
+      value=static_cast<unsigned char> (cont);
+      filtered.at<uchar>(Point(i, j)) = value+img.at<uchar>(Point(i, j));
+      cont=0;
+    }
+  }
+  return filtered;
 }
