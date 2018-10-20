@@ -63,14 +63,17 @@ int main(int argc, char *argv[]) {
 
     // Shift quadrants so the Fourier image origin is in the center of the image
     dftshift(mag);
-
-    imshow_res("Original Magnitude", mag,img_original.rows/4,img_original.cols/4);
+    Mat mag_orig=mag.clone();
+    mag_orig += cv::Scalar::all(1);
+    cv::log(mag_orig, mag_orig);
+    normalize(mag_orig, mag_orig, 0, 1, cv::NORM_MINMAX);
+    imshow_res("Original Magnitude", mag_orig,mag_orig.rows/4,mag_orig.cols/4);
 
 
     /**************************************************************************
      ************************image correction**********************************
      **************************************************************************/
-     mag=remove_circunference(mag,40,825);
+     mag=remove_circunference(mag,150,825);
      // Shift back quadrants of the spectrum
      dftshift(mag);
 

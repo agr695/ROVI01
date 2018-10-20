@@ -36,6 +36,39 @@ int main(int argc, char *argv[]) {
      **************************************************************************/
 
     Mat hist_orig = histogram_creation(img_original);   //histogram original
+    cv::Mat padded;
+    int opt_rows = cv::getOptimalDFTSize(img_original.rows * 2 - 1);
+    int opt_cols = cv::getOptimalDFTSize(img_original.cols * 2 - 1);
+    cv::copyMakeBorder(img_original, padded, 0, opt_rows - img_original.rows, 0, opt_cols - img_original.cols,
+                       cv::BORDER_CONSTANT, cv::Scalar::all(0));
+
+    // Make place for both the real and complex values by merging planes into a
+    // cv::Mat with 2 channels.
+    // Use float element type because frequency domain ranges are large.
+    cv::Mat planes[] = {
+        cv::Mat_<float>(padded),
+        cv::Mat_<float>::zeros(padded.size())
+    };
+    cv::Mat complex;
+    cv::merge(planes, 2, complex);
+
+    // Compute DFT of image
+    cv::dft(complex, complex);
+
+    // Split real and complex planes
+    cv::split(complex, planes);
+
+    // Compute the magnitude and phase
+    cv::Mat mag, phase;
+    cv::cartToPolar(planes[0], planes[1], mag, phase);
+
+    // Shift quadrants so the Fourier image origin is in the center of the image
+    dftshift(mag);
+    Mat mag_orig=mag.clone();
+    mag_orig += cv::Scalar::all(1);
+    cv::log(mag_orig, mag_orig);
+    normalize(mag_orig, mag_orig, 0, 1, cv::NORM_MINMAX);
+    imshow_res("Original Magnitude", mag_orig,mag_orig.rows/4,mag_orig.cols/4);
 
     /**************************************************************************
      ************************image correction**********************************

@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
      ************************Problem detection*********************************
      **************************************************************************/
     Mat hist_orig = histogram_creation(img_original);   //histogram original
+
     cv::Mat padded;
     int opt_rows = cv::getOptimalDFTSize(img_original.rows * 2 - 1);
     int opt_cols = cv::getOptimalDFTSize(img_original.cols * 2 - 1);
@@ -63,14 +64,23 @@ int main(int argc, char *argv[]) {
 
     // Shift quadrants so the Fourier image origin is in the center of the image
     dftshift(mag);
-
-    imshow_res("Original Magnitude", mag,img_original.rows/4,img_original.cols/4);
+    Mat mag_orig=mag.clone();
+    mag_orig += cv::Scalar::all(1);
+    cv::log(mag_orig, mag_orig);
+    normalize(mag_orig, mag_orig, 0, 1, cv::NORM_MINMAX);
+    imshow_res("Original Magnitude", mag_orig,mag_orig.rows/4,mag_orig.cols/4);
 
 
     /**************************************************************************
      ************************image correction**********************************
      **************************************************************************/
-     mag=remove_ellipse(mag,40,875);
+     int M=mag.rows;
+     int N=mag.cols;
+     mag=remove_point(mag,60,N/2+sqrt(2)*875/2,M/2-sqrt(2)* 875/2);
+     mag=remove_point(mag,60,N/2-sqrt(2)*875/2,M/2+sqrt(2)* 875/2);
+     mag=remove_point(mag,60,N/2+sqrt(2)*875/6,M/2+sqrt(2)* 875/6);
+     mag=remove_point(mag,60,N/2-sqrt(2)*875/6,M/2-sqrt(2)* 875/6);
+
      // Shift back quadrants of the spectrum
      dftshift(mag);
 
@@ -95,11 +105,11 @@ int main(int argc, char *argv[]) {
     /**************************************************************************
      ***********************show images and histograms*************************
      **************************************************************************/
-     mag += cv::Scalar::all(1);
-     cv::log(mag, mag);
-     normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
+    mag += cv::Scalar::all(1);
+    cv::log(mag, mag);
+    normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
     imshow_res("original image", img_original, img_original.cols / 2, img_original.rows / 2);
-    imshow_res("Magnitude", mag,img_original.rows/4,img_original.cols/4);
+    imshow_res("Magnitude", mag,mag.rows/4,mag.cols/4);
 
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)

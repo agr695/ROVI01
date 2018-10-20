@@ -1,3 +1,3 @@
-/home/student/Downloads/vision/ROVI01/vision/miniproject1/image4/build/CMakeFiles/rebuild_cache.dir
-/home/student/Downloads/vision/ROVI01/vision/miniproject1/image4/build/CMakeFiles/image4.dir
-/home/student/Downloads/vision/ROVI01/vision/miniproject1/image4/build/CMakeFiles/edit_cache.dir
+/home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_1/build/CMakeFiles/rebuild_cache.dir
+/home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_1/build/CMakeFiles/image4.dir
+/home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_1/build/CMakeFiles/edit_cache.dir

@@ -237,27 +237,6 @@ void dftshift(cv::Mat& mag)
     tmp.copyTo(q2);
 }
 
-
-Mat remove_ellipse(Mat mag,int size,int rad){
-  Mat ret=mag.clone();
-  int N=ret.rows;
-  int M=ret.cols;
-
-
-  ellipse( ret,
-          Point(M/2,N/2),
-          Size(rad,rad/3),
-          -45,
-          0,
-          360,
-          Scalar(0,0,0),
-          size);
-
-  return ret;
-
-}
-
-
 Mat remove_circunference(Mat mag,int size,int rad){
   Mat ret=mag.clone();
   int N=ret.rows;
@@ -268,6 +247,19 @@ Mat remove_circunference(Mat mag,int size,int rad){
           rad,
           Scalar(0,0,0),
           size);
+
+  return ret;
+
+}
+
+Mat remove_point(Mat mag,int rad, int center_x, int center_y){
+  Mat ret=mag.clone();
+
+  circle( ret,
+          Point(center_x, center_y),
+          rad,
+          Scalar(0,0,0),
+          -1);
 
   return ret;
 
