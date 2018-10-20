@@ -3,6 +3,7 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
 #include <stdio.h>
+#include <math.h>
 
 
 using namespace cv;
@@ -120,6 +121,36 @@ Mat mean_filter(Mat img, int size) {
     return filtered;
 }
 
+Mat wiener_filter(Mat mag, float k, int a) {
+    Mat filtered = mag.clone();
+    int i, j;
+    float H;
+    float value;
+    int M = mag.cols;
+    int N = mag.rows;
+//    int T = M * N;
+//    float arg;
+    float rad2deg = static_cast<float>(M_PI / 180);
+
+    for (i = 1; i < M; i++) {
+        for (j = 0; j < N; j++) {
+//            arg = static_cast<float>(M_PI * (i * a + j * b));
+//            H = (1/2) * (T/arg) * sin(2 * arg * rad2deg);
+            if (i == 0) {
+                H = 1;
+            }
+            else {
+                H = static_cast<float>(sin(M_PI * i * a * rad2deg));
+            }
+            value = H / (H*H + k) * mag.at<float>(Point(i, j));
+            filtered.at<float>(Point(i, j)) = value;
+        }
+
+    }
+
+    return filtered;
+}
+
 Mat contraharmonic_filter(Mat img, int size, double Q) {
     Mat filtered = img.clone();
     int i, j, k, l;
@@ -163,13 +194,12 @@ Mat harmonic_filter(Mat img, int size) {
                 for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
                     if (img.at<uchar>(Point(i + k, j + l)) == 0) {
                         cont += 100.0;
-                    }
-                    else {
+                    } else {
                         cont += 1.0 / img.at<uchar>(Point(i + k, j + l));
                     }
                 }
             }
-            value = static_cast<unsigned char>((size * size)/ cont);
+            value = static_cast<unsigned char>((size * size) / cont);
             filtered.at<uchar>(Point(i, j)) = value;
             cont = 0;
         }
@@ -214,8 +244,7 @@ Mat intesity_transf(Mat img, int intens_inc) {
     return trans;
 }
 
-void dftshift(cv::Mat& mag)
-{
+void dftshift(cv::Mat &mag) {
     int cx = mag.cols / 2;
     int cy = mag.rows / 2;
 
@@ -234,31 +263,31 @@ void dftshift(cv::Mat& mag)
     tmp.copyTo(q2);
 }
 
-Mat remove_circunference(Mat mag,int size,int rad){
-  Mat ret=mag.clone();
-  int N=ret.rows;
-  int M=ret.cols;
+Mat remove_circunference(Mat mag, int size, int rad) {
+    Mat ret = mag.clone();
+    int N = ret.rows;
+    int M = ret.cols;
 
-  circle( ret,
-          Point(M/2,N/2),
-          rad,
-          Scalar(0,0,0),
-          size);
+    circle(ret,
+           Point(M / 2, N / 2),
+           rad,
+           Scalar(0, 0, 0),
+           size);
 
-  return ret;
+    return ret;
 
 }
 
-Mat remove_point(Mat mag,int rad, int center_x, int center_y){
-  Mat ret=mag.clone();
+Mat remove_point(Mat mag, int rad, int center_x, int center_y) {
+    Mat ret = mag.clone();
 
-  circle( ret,
-          Point(center_x, center_y),
-          rad,
-          Scalar(0,0,0),
-          -1);
+    circle(ret,
+           Point(center_x, center_y),
+           rad,
+           Scalar(0, 0, 0),
+           -1);
 
-  return ret;
+    return ret;
 
 }
 
@@ -267,7 +296,7 @@ Mat laplacian_filter(Mat img) {
     Mat filtered = img.clone();
     int i, j, k, l;
     int cont = 0;
-    int size=3;
+    int size = 3;
     unsigned char value;
     int N = img.rows - (size - 1) / 2;
     int M = img.cols - (size - 1) / 2;
@@ -276,17 +305,16 @@ Mat laplacian_filter(Mat img) {
         for (j = (size - 1) / 2; j < N; j++) {
             for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
                 for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
-                    if(k==0 && l==0){
-                      cont+=9 * img.at<uchar>(Point(i + k, j + l));
-                    }
-                    else{
-                      cont-=img.at<uchar>(Point(i + k, j + l));
+                    if (k == 0 && l == 0) {
+                        cont += 9 * img.at<uchar>(Point(i + k, j + l));
+                    } else {
+                        cont -= img.at<uchar>(Point(i + k, j + l));
                     }
                 }
             }
-            value=static_cast<unsigned char> (cont);
+            value = static_cast<unsigned char> (cont);
             filtered.at<uchar>(Point(i, j)) = value;
-            cont=0;
+            cont = 0;
         }
     }
     return filtered;
@@ -294,30 +322,29 @@ Mat laplacian_filter(Mat img) {
 
 
 Mat sobel_filter(Mat img) {
-  Mat filtered = img.clone();
-  int i, j, k, l;
-  int cont = 0;
-  int size=3;
-  unsigned char value;
-  int N = img.rows - (size - 1) / 2;
-  int M = img.cols - (size - 1) / 2;
+    Mat filtered = img.clone();
+    int i, j, k, l;
+    int cont = 0;
+    int size = 3;
+    unsigned char value;
+    int N = img.rows - (size - 1) / 2;
+    int M = img.cols - (size - 1) / 2;
 
-  for (i = (size - 1) / 2; i < M; i++) {
-    for (j = (size - 1) / 2; j < N; j++) {
-      for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
-        for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
-          if(l==0){
-            cont+=k*2*img.at<uchar>(Point(i + k, j + l));
-          }
-          else{
-            cont+=k*img.at<uchar>(Point(i + k, j + l));
-          }
+    for (i = (size - 1) / 2; i < M; i++) {
+        for (j = (size - 1) / 2; j < N; j++) {
+            for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
+                for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
+                    if (l == 0) {
+                        cont += k * 2 * img.at<uchar>(Point(i + k, j + l));
+                    } else {
+                        cont += k * img.at<uchar>(Point(i + k, j + l));
+                    }
+                }
+            }
+            value = static_cast<unsigned char> (cont);
+            filtered.at<uchar>(Point(i, j)) = value + img.at<uchar>(Point(i, j));
+            cont = 0;
         }
-      }
-      value=static_cast<unsigned char> (cont);
-      filtered.at<uchar>(Point(i, j)) = value+img.at<uchar>(Point(i, j));
-      cont=0;
     }
-  }
-  return filtered;
+    return filtered;
 }

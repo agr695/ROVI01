@@ -74,7 +74,25 @@ int main(int argc, char *argv[]) {
     /**************************************************************************
      ************************image correction**********************************
      **************************************************************************/
-     Mat filter_img=laplacian_filter(img_original);
+    mag = wiener_filter(mag, 1, 1);
+
+    // Shift back quadrants of the spectrum
+    dftshift(mag);
+
+    // Compute complex DFT planes from magnitude/phase
+    cv::polarToCart(mag, phase, planes[0], planes[1]);
+
+    // Merge into one image
+    cv::merge(planes, 2, complex);
+
+    // Restore by performing inverse DFT
+    cv::Mat filtered_img;
+    cv::idft(complex, filtered_img, (cv::DFT_SCALE | cv::DFT_REAL_OUTPUT));
+
+    // Shift mag quadrants again for visualization purposes
+    dftshift(mag);
+    cv::normalize(filtered_img, filtered_img, 0, 1, cv::NORM_MINMAX);
+    imshow_res("Filtered image", filtered_img, filtered_img.rows/2, filtered_img.cols/2);
 
     /**************************************************************************
      ***********************show images and histograms*************************
@@ -84,7 +102,7 @@ int main(int argc, char *argv[]) {
     normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
     imshow_res("original image", img_original, img_original.cols / 2, img_original.rows / 2);
     imshow_res("Magnitude", mag,mag.rows/4,mag.cols/4);
-    imshow_res("filtered image", filter_img, filter_img.cols / 2, filter_img.rows / 2);
+//    imshow_res("filtered image", filtered_img, filtered_img.cols / 2, filtered_img.rows / 2);
 
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)
