@@ -102,7 +102,6 @@ int main(int argc, char *argv[]) {
     normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
     imshow_res("original image", img_original, img_original.cols / 2, img_original.rows / 2);
     imshow_res("Magnitude", mag,mag.rows/4,mag.cols/4);
-//    imshow_res("filtered image", filtered_img, filtered_img.cols / 2, filtered_img.rows / 2);
 
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)

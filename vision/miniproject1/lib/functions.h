@@ -18,6 +18,7 @@ void imshow_res(const string winname, Mat img, int width, int height) {
 }
 
 /*function to calculate the histogram of an image*/
+/*https://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_calculation/histogram_calculation.html*/
 Mat histogram_creation(Mat img_orig) {
     Mat img = img_orig.clone();
     // Set histogram bins count
@@ -48,73 +49,78 @@ Mat histogram_creation(Mat img_orig) {
     return hist_image;
 }
 
+/*Function to calculate the median of a vector*/
 unsigned char median(vector<unsigned char> vect) {
     int length = vect.size();
     sort(vect.begin(), vect.begin() + length);
     return vect[(length - 1) / 2];
 }
 
+/*Function to compute an adaptive median filter*/
 Mat adapt_med_filter(Mat img, const int z_min, const int z_max, const int max_win_size) {
     Mat ret = img.clone();
-    int win_size;
+    int win_size; //current windows size
+    /*start and stop point in loop to avoid corners*/
     int start = max_win_size;
     int stop_i = ret.cols - max_win_size;
     int stop_j = ret.rows - max_win_size;
-    bool cont;
+
+    bool cont;//flag to indicate if the value is correct
     unsigned int median_value;
     int i, j, k, t;
-    unsigned char neighbours[max_win_size * max_win_size];
+    unsigned char *neighbours=new unsigned char[max_win_size * max_win_size];
     vector<unsigned char> vector_median;
-    int counter = 0;
+    int index = 0;
 
-
+    /*loops to follow the image*/
     for (i = start; i < stop_i; i++) {
         for (j = start; j < stop_j; j++) {
             win_size = 1;
             cont = true;
-            while (cont && win_size <= max_win_size) {
-                counter = 0;
+            while (cont && win_size <=  static_cast<int>(max_win_size)) {
+                index = 0;
+                /*loops to explore the neighbours of the current pixel*/
                 for (k = -(win_size - 1) / 2; k <= (win_size - 1) / 2; k++) {
                     for (t = -(win_size - 1) / 2; t <= (win_size - 1) / 2; t++) {
-                        neighbours[counter] = img.at<uchar>(Point(i + k, j + t));
-                        counter++;
-                        // std::cout << int(neighbours[counter]) << '\n';
+                        neighbours[index] = img.at<uchar>(Point(i + k, j + t));
+                        index++;
                     }
                 }
-                // cout<<endl;
+                /*get the median value of the neighbours*/
                 vector_median.assign(neighbours, neighbours + win_size);
                 median_value = median(vector_median);
-                if (median_value > z_min && median_value < z_max) {
+                if ( static_cast<int>(median_value) > z_min &&  static_cast<int>(median_value) < z_max) {
                     cont = false;
                 }
                 win_size += 2;
             }
             ret.at<uchar>(Point(i, j)) = median_value;
-            // std::cout <<int(ret.at<uchar >(j,i))<<"   "<< int(median_value) << "  " <<j<< "   " << i << "   "<< '\n';
         }
     }
-
+    delete [] neighbours;
     return ret;
 }
 
-
+/*Function to applied a mean filter*/
 Mat mean_filter(Mat img, int size) {
     Mat filtered = img.clone();
     int i, j, k, l;
-    int cont = 0;
+    int counter = 0;
     unsigned char value;
     int M = img.cols - (size - 1) / 2;
     int N = img.rows - (size - 1) / 2;
 
+    /*loops to follow the image*/
     for (i = (size - 1) / 2; i < M; i++) {
         for (j = (size - 1) / 2; j < N; j++) {
+            /*loops to explore the neighbours of the current pixel*/
             for (k = -(size - 1) / 2; k <= (size - 1) / 2; k++) {
                 for (l = -(size - 1) / 2; l <= (size - 1) / 2; l++) {
-                    cont += img.at<uchar>(Point(i + k, j + l));
+                    counter += img.at<uchar>(Point(i + k, j + l));
                 }
             }
-            value = cont / (size * size);
-            cont = 0;
+            value = counter / (size * size);
+            counter = 0;
             filtered.at<uchar>(Point(i, j)) = value;
         }
     }
@@ -151,6 +157,7 @@ Mat wiener_filter(Mat mag, float k, int a) {
     return filtered;
 }
 
+/*Function to applied a contraharmonic filter*/
 Mat contraharmonic_filter(Mat img, int size, double Q) {
     Mat filtered = img.clone();
     int i, j, k, l;
@@ -160,8 +167,10 @@ Mat contraharmonic_filter(Mat img, int size, double Q) {
     int N = img.rows - (size - 1) / 2;
     int M = img.cols - (size - 1) / 2;
 
+    /*loops to follow the image*/
     for (i = (size - 1) / 2; i < M; i++) {
         for (j = (size - 1) / 2; j < N; j++) {
+            /*loops to explore the neighbours of the current pixel*/
             for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
                 for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
                     num += pow(img.at<uchar>(Point(i + k, j + l)), Q + 1);
@@ -180,63 +189,70 @@ Mat contraharmonic_filter(Mat img, int size, double Q) {
     return filtered;
 }
 
+/*Function to applied an armonic filter*/
 Mat harmonic_filter(Mat img, int size) {
     Mat filtered = img.clone();
     int i, j, k, l;
-    double cont = 0;
+    double counter = 0;
     unsigned char value;
     int N = img.rows - (size - 1) / 2;
     int M = img.cols - (size - 1) / 2;
 
+    /*loops to follow the image*/
     for (i = (size - 1) / 2; i < M; i++) {
         for (j = (size - 1) / 2; j < N; j++) {
+            /*loops to explore the neighbours of the current pixel*/
             for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
                 for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
                     if (img.at<uchar>(Point(i + k, j + l)) == 0) {
-                        cont += 100.0;
+                        counter += 100.0;
                     } else {
-                        cont += 1.0 / img.at<uchar>(Point(i + k, j + l));
+                        counter += 1.0 / img.at<uchar>(Point(i + k, j + l));
                     }
                 }
             }
-            value = static_cast<unsigned char>((size * size) / cont);
+            value = static_cast<unsigned char>((size * size) / counter);
             filtered.at<uchar>(Point(i, j)) = value;
-            cont = 0;
+            counter = 0;
         }
     }
     return filtered;
 }
 
+/*Function to applied a geometric mean filter*/
 Mat geom_mean_filter(Mat img, int size) {
     Mat filtered = img.clone();
     int i, j, k, l;
-    long long int cont = 1;
+    long long int counter = 1;
     unsigned char value;
     int M = img.cols - (size - 1) / 2;
     int N = img.rows - (size - 1) / 2;
 
+    /*loops to follow the image*/
     for (i = (size - 1) / 2; i < M; i++) {
         for (j = (size - 1) / 2; j < N; j++) {
+          /*loops to explore the neighbours of the current pixel*/
             for (k = -(size - 1) / 2; k <= (size - 1) / 2; k++) {
                 for (l = -(size - 1) / 2; l <= (size - 1) / 2; l++) {
-                    cont *= img.at<uchar>(Point(i + k, j + l));
+                    counter *= img.at<uchar>(Point(i + k, j + l));
                 }
             }
-            value = pow(cont, (1.0 / (size * size)));
-            cont = 1;
+            value = pow(counter, (1.0 / (size * size)));
+            counter = 1;
             filtered.at<uchar>(Point(i, j)) = value;
         }
     }
     return filtered;
 }
 
+/*Function to applied an intensity transformation*/
 Mat intesity_transf(Mat img, int intens_inc) {
     Mat trans = img.clone();
     int i, j;
     int M = img.rows;
-
     int N = img.cols;
 
+    /*loops to follow the image*/
     for (i = 0; i < M; i++)
         for (j = 0; j < N; j++)
             trans.at<uchar>(i, j) = saturate_cast<uchar>(img.at<uchar>(i, j) + intens_inc);
@@ -244,6 +260,8 @@ Mat intesity_transf(Mat img, int intens_inc) {
     return trans;
 }
 
+/*Function to shift the DFT magnitude*/
+/*https://docs.opencv.org/3.1.0/d8/d01/tutorial_discrete_fourier_transform.html*/
 void dftshift(cv::Mat &mag) {
     int cx = mag.cols / 2;
     int cy = mag.rows / 2;
@@ -263,6 +281,7 @@ void dftshift(cv::Mat &mag) {
     tmp.copyTo(q2);
 }
 
+/*Function to remove a circunference in the magnitude DFT spectrum*/
 Mat remove_circunference(Mat mag, int size, int rad) {
     Mat ret = mag.clone();
     int N = ret.rows;
@@ -278,6 +297,7 @@ Mat remove_circunference(Mat mag, int size, int rad) {
 
 }
 
+/*Function to remove a point in the magnitude DFT spectrum*/
 Mat remove_point(Mat mag, int rad, int center_x, int center_y) {
     Mat ret = mag.clone();
 
@@ -288,62 +308,65 @@ Mat remove_point(Mat mag, int rad, int center_x, int center_y) {
            -1);
 
     return ret;
-
 }
 
-
+/*Function to applied a laplacian filter*/
 Mat laplacian_filter(Mat img) {
     Mat filtered = img.clone();
     int i, j, k, l;
-    int cont = 0;
+    int counter = 0;
     int size = 3;
     unsigned char value;
     int N = img.rows - (size - 1) / 2;
     int M = img.cols - (size - 1) / 2;
 
+    /*loops to follow the image*/
     for (i = (size - 1) / 2; i < M; i++) {
         for (j = (size - 1) / 2; j < N; j++) {
+            /*loops to explore the neighbours of the current pixel*/
             for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
                 for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
-                    if (k == 0 && l == 0) {
-                        cont += 9 * img.at<uchar>(Point(i + k, j + l));
+                    if (k == 0 && l == 0) { //the current pixel
+                        counter += 9 * img.at<uchar>(Point(i + k, j + l));
                     } else {
-                        cont -= img.at<uchar>(Point(i + k, j + l));
+                        counter -= img.at<uchar>(Point(i + k, j + l));
                     }
                 }
             }
-            value = static_cast<unsigned char> (cont);
+            value = static_cast<unsigned char> (counter);
             filtered.at<uchar>(Point(i, j)) = value;
-            cont = 0;
+            counter = 0;
         }
     }
     return filtered;
 }
 
-
+/*Function to applied a sobel filter*/
 Mat sobel_filter(Mat img) {
     Mat filtered = img.clone();
     int i, j, k, l;
-    int cont = 0;
+    int counter = 0;
     int size = 3;
     unsigned char value;
     int N = img.rows - (size - 1) / 2;
     int M = img.cols - (size - 1) / 2;
 
+    /*loops to follow the image*/
     for (i = (size - 1) / 2; i < M; i++) {
         for (j = (size - 1) / 2; j < N; j++) {
+            /*loops to explore the neighbours of the current pixel*/
             for (k = -((size - 1) / 2); k <= (size - 1) / 2; k++) {
                 for (l = -((size - 1) / 2); l <= (size - 1) / 2; l++) {
-                    if (l == 0) {
-                        cont += k * 2 * img.at<uchar>(Point(i + k, j + l));
+                    if (l == 0) { //Central column
+                        counter += k * 2 * img.at<uchar>(Point(i + k, j + l));
                     } else {
-                        cont += k * img.at<uchar>(Point(i + k, j + l));
+                        counter += k * img.at<uchar>(Point(i + k, j + l));
                     }
                 }
             }
-            value = static_cast<unsigned char> (cont);
+            value = static_cast<unsigned char> (counter);
             filtered.at<uchar>(Point(i, j)) = value + img.at<uchar>(Point(i, j));
-            cont = 0;
+            counter = 0;
         }
     }
     return filtered;

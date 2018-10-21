@@ -41,9 +41,6 @@ int main(int argc, char *argv[]) {
     cv::copyMakeBorder(img_original, padded, 0, opt_rows - img_original.rows, 0, opt_cols - img_original.cols,
                        cv::BORDER_CONSTANT, cv::Scalar::all(0));
 
-    // Make place for both the real and complex values by merging planes into a
-    // cv::Mat with 2 channels.
-    // Use float element type because frequency domain ranges are large.
     cv::Mat planes[] = {
         cv::Mat_<float>(padded),
         cv::Mat_<float>::zeros(padded.size())
