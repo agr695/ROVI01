@@ -83,6 +83,16 @@ int main(int argc, char *argv[]) {
     imshow("original image histogram", hist_orig);
     imshow("median filtered image histogram", hist_filter);
 
+    /**************************************************************************
+     ***********************save images and histograms*************************
+     **************************************************************************/
+    imwrite("../Results/Image3_Filter.png", filter_img);
+    imwrite("../Results/Image3_Histogram_original.png", hist_orig);
+    imwrite("../Results/Image3_Histogram_filter.png", hist_filter);
+    mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    imwrite("../Results/Image3_Magnitude.png", mag_orig);
+
+
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)
 

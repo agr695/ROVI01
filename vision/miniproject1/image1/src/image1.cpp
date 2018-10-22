@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
     Mat filter_img3 = contraharmonic_filter(img_original, 5, 0.5);
     Mat img_trans_eq;
     equalizeHist(filter_img1, img_trans_eq);
-
+    Mat hist_filter1_eq = histogram_creation(img_trans_eq);
     /**************************************************************************
      ***********************show images and histograms*************************
      **************************************************************************/
@@ -91,6 +91,21 @@ int main(int argc, char *argv[]) {
     imshow_res("filtered image0.5", filter_img3, filter_img3.cols / 2, filter_img3.rows / 2);
     imshow_res("filtered image equalize", img_trans_eq, img_trans_eq.cols / 2, img_trans_eq.rows / 2);
     imshow("original image histogram", hist_orig);
+    hist_filter1_eq.convertTo(hist_filter1_eq, CV_8UC1, 255.0);
+    imshow("original image histogram", hist_filter1_eq);
+
+    /**************************************************************************
+     ***********************save images and histograms*************************
+     **************************************************************************/
+    imwrite("../Results/Image1_Filter1.png", filter_img1);
+    imwrite("../Results/Image1_Filter2.png", filter_img2);
+    imwrite("../Results/Image1_Filter3.png", filter_img3);
+    imwrite("../Results/Image1_Filter1_equalize.png", img_trans_eq);
+    imwrite("../Results/Image1_Histogram_original.png", hist_orig);
+    imwrite("../Results/Image1_Histogram_filter1.png", hist_filter1_eq);
+    mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    imwrite("../Results/Image1_Magnitude.png", mag_orig);
+
 
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)

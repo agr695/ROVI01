@@ -72,23 +72,55 @@ int main(int argc, char *argv[]) {
     int z_min = 50;
     int z_max = 225;
     int max_win_size = 15;
-    Mat filter_img = adapt_med_filter(img_original, z_min, z_max, max_win_size);
-    Mat hist_filter = histogram_creation(filter_img);
-    Mat filter_mean_img = mean_filter(filter_img, 3);
+    Mat filter_img1 = adapt_med_filter(img_original, z_min, z_max, max_win_size);
+
+    z_min = 50;
+    z_max = 225;
+    max_win_size = 7;
+    Mat filter_img2 = adapt_med_filter(img_original, z_min, z_max, max_win_size);
+
+    z_min = 50;
+    z_max = 225;
+    max_win_size = 21;
+    Mat filter_img3 = adapt_med_filter(img_original, z_min, z_max, max_win_size);
+
+    z_min = 0;
+    z_max = 255;
+    max_win_size = 15;
+    Mat filter_img4 = adapt_med_filter(img_original, z_min, z_max, max_win_size);
+
+    Mat hist_filter = histogram_creation(filter_img1);
+    Mat filter_mean_img = mean_filter(filter_img1, 3);
     Mat hist_filter_mean = histogram_creation(filter_mean_img);
     Mat img_trans_eq;
     equalizeHist(filter_mean_img, img_trans_eq);
+    Mat hist_filter_mean_eq = histogram_creation(img_trans_eq);
     /**************************************************************************
      ***********************show images and histograms*************************
      **************************************************************************/
     imshow_res("original image", img_original, img_original.cols / 2, img_original.rows / 2);
-    imshow_res("filtered image", filter_img, filter_img.cols / 2, filter_img.rows / 2);
+    imshow_res("filtered image", filter_img1, filter_img1.cols / 2, filter_img1.rows / 2);
     imshow_res("filtered image mean", filter_mean_img, filter_mean_img.cols / 2, filter_mean_img.rows / 2);
     imshow_res("filtered image equalize", img_trans_eq, img_trans_eq.cols / 2, img_trans_eq.rows / 2);
-
     imshow("original image histogram", hist_orig);
     imshow("median filtered image histogram", hist_filter);
     imshow("mean filtered image histogram", hist_filter_mean);
+
+    /**************************************************************************
+     ***********************save images and histograms*************************
+     **************************************************************************/
+    imwrite("../Results/Image2_Filter1.png", filter_img1);
+    imwrite("../Results/Image2_Filter2.png", filter_img2);
+    imwrite("../Results/Image2_Filter3.png", filter_img3);
+    imwrite("../Results/Image2_Filter4.png", filter_img4);
+    imwrite("../Results/Image2_Filter1_mean.png", filter_mean_img);
+    imwrite("../Results/Image2_Filter1_mean_equalize.png", img_trans_eq);
+    imwrite("../Results/Image2_Histogram_original.png", hist_orig);
+    imwrite("../Results/Image2_Histogram_filter1.png", hist_filter);
+    imwrite("../Results/Image2_Histogram_filter1_mean.png", hist_filter_mean);
+    imwrite("../Results/Image2_Histogram_filter1_mean_equalize.png", hist_filter_mean_eq);
+    mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    imwrite("../Results/Image2_Magnitude.png", mag_orig);
 
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)

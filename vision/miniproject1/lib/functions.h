@@ -58,13 +58,10 @@ unsigned char median(vector<unsigned char> vect) {
 
 /*Function to compute an adaptive median filter*/
 Mat adapt_med_filter(Mat img, const int z_min, const int z_max, const int max_win_size) {
-    Mat ret = img.clone();
+    Mat ret(img.rows-max_win_size,img.cols-max_win_size,CV_8UC1);
     int win_size; //current windows size
-    /*start and stop point in loop to avoid corners*/
-    int start = max_win_size;
-    int stop_i = ret.cols - max_win_size;
-    int stop_j = ret.rows - max_win_size;
-
+    int M = ret.cols;
+    int N = ret.rows;
     bool cont;//flag to indicate if the value is correct
     unsigned int median_value;
     int i, j, k, t;
@@ -73,8 +70,8 @@ Mat adapt_med_filter(Mat img, const int z_min, const int z_max, const int max_wi
     int index = 0;
 
     /*loops to follow the image*/
-    for (i = start; i < stop_i; i++) {
-        for (j = start; j < stop_j; j++) {
+    for (i = 0; i < M; i++) {
+        for (j = 0; j < N; j++) {
             win_size = 1;
             cont = true;
             while (cont && win_size <=  static_cast<int>(max_win_size)) {
@@ -82,7 +79,7 @@ Mat adapt_med_filter(Mat img, const int z_min, const int z_max, const int max_wi
                 /*loops to explore the neighbours of the current pixel*/
                 for (k = -(win_size - 1) / 2; k <= (win_size - 1) / 2; k++) {
                     for (t = -(win_size - 1) / 2; t <= (win_size - 1) / 2; t++) {
-                        neighbours[index] = img.at<uchar>(Point(i + k, j + t));
+                        neighbours[index] = img.at<uchar>(Point(i+max_win_size + k, j+max_win_size + t));
                         index++;
                     }
                 }

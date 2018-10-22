@@ -98,12 +98,22 @@ int main(int argc, char *argv[]) {
     /**************************************************************************
      ***********************show images and histograms*************************
      **************************************************************************/
-     mag += cv::Scalar::all(1);
-     cv::log(mag, mag);
-     normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
+    mag += cv::Scalar::all(1);
+    cv::log(mag, mag);
+    normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
     imshow_res("original image", img_original, img_original.cols / 2, img_original.rows / 2);
     imshow_res("Magnitude", mag,img_original.rows/4,img_original.cols/4);
 
+    /**************************************************************************
+     ***********************save images and histograms*************************
+     **************************************************************************/
+    filtered.convertTo(filtered, CV_8UC1, 255);
+    imwrite("../Results/Image4_2_Filter.png", filtered);
+    imwrite("../Results/Image4_2_Histogram_original.png", hist_orig);
+    mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    imwrite("../Results/Image4_2_Magnitude_original.png", mag_orig);
+    mag.convertTo(mag, CV_8UC1, 255);
+    imwrite("../Results/Image4_2_Magnitude_filtered.png", mag);
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)
 
