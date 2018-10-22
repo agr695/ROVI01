@@ -32,7 +32,7 @@ Mat histogram_creation(Mat img_orig) {
     int channels[] = {0};
     // create matrix for histogram visualization
     int const hist_height = 512;
-    Mat3b hist_image = Mat3b::zeros(hist_height, bins);
+    Mat hist_image(hist_height, bins,CV_8UC1,255);
 
     calcHist(&img, 1, channels, Mat(), hist, 1, histSize, ranges, true, false);
     double max_val = 0;
@@ -42,9 +42,11 @@ Mat histogram_creation(Mat img_orig) {
     for (int b = 0; b < bins; b++) {
         float const binVal = hist.at<float>(b);
         int const height = cvRound(binVal * hist_height / max_val);
-        line
-                (hist_image, Point(b, hist_height - height), Point(b, hist_height), Scalar::all(255)
-                );
+        line(hist_image,
+             Point(b, hist_height - height),
+             Point(b, hist_height),
+             Scalar::all(0),
+             2);
     }
     return hist_image;
 }

@@ -107,13 +107,25 @@ int main(int argc, char *argv[]) {
     /**************************************************************************
      ***********************save images and histograms*************************
      **************************************************************************/
+    // filtered.convertTo(filtered, CV_8UC1, 255);
+    // imwrite("../Results/Image4_2_Filter.png", filtered);
+    // imwrite("../Results/Image4_2_Histogram_original.png", hist_orig);
+    // mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    // imwrite("../Results/Image4_2_Magnitude_original.png", mag_orig);
+    // mag.convertTo(mag, CV_8UC1, 255);
+    // imwrite("../Results/Image4_2_Magnitude_filtered.png", mag);
+
+    std::vector<int> params;
+    params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    params.push_back(25);
     filtered.convertTo(filtered, CV_8UC1, 255);
-    imwrite("../Results/Image4_2_Filter.png", filtered);
-    imwrite("../Results/Image4_2_Histogram_original.png", hist_orig);
+    imwrite("../Results/Image4_2_Filter.jpeg", filtered,params);
+    imwrite("../Results/Image4_2_Histogram_original.jpeg", hist_orig,params);
     mag_orig.convertTo(mag_orig, CV_8UC1, 255);
-    imwrite("../Results/Image4_2_Magnitude_original.png", mag_orig);
+    imwrite("../Results/Image4_2_Magnitude_original.jpeg", mag_orig,params);
     mag.convertTo(mag, CV_8UC1, 255);
-    imwrite("../Results/Image4_2_Magnitude_filtered.png", mag);
+    imwrite("../Results/Image4_2_Magnitude_filtered.jpeg", mag,params);
+
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)
 

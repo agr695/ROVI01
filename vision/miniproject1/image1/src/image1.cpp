@@ -97,15 +97,26 @@ int main(int argc, char *argv[]) {
     /**************************************************************************
      ***********************save images and histograms*************************
      **************************************************************************/
-    imwrite("../Results/Image1_Filter1.png", filter_img1);
-    imwrite("../Results/Image1_Filter2.png", filter_img2);
-    imwrite("../Results/Image1_Filter3.png", filter_img3);
-    imwrite("../Results/Image1_Filter1_equalize.png", img_trans_eq);
-    imwrite("../Results/Image1_Histogram_original.png", hist_orig);
-    imwrite("../Results/Image1_Histogram_filter1.png", hist_filter1_eq);
-    mag_orig.convertTo(mag_orig, CV_8UC1, 255);
-    imwrite("../Results/Image1_Magnitude.png", mag_orig);
+    // imwrite("../Results/Image1_Filter1.png", filter_img1);
+    // imwrite("../Results/Image1_Filter2.png", filter_img2);
+    // imwrite("../Results/Image1_Filter3.png", filter_img3);
+    // imwrite("../Results/Image1_Filter1_equalize.png", img_trans_eq);
+    // imwrite("../Results/Image1_Histogram_original.png", hist_orig);
+    // imwrite("../Results/Image1_Histogram_filter1.png", hist_filter1_eq);
+    // mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    // imwrite("../Results/Image1_Magnitude.png", mag_orig);
 
+    std::vector<int> params;
+    params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    params.push_back(25);
+    imwrite("../Results/Image1_Filter1.jpeg", filter_img1,params);
+    imwrite("../Results/Image1_Filter2.jpeg", filter_img2,params);
+    imwrite("../Results/Image1_Filter3.jpeg", filter_img3,params);
+    imwrite("../Results/Image1_Filter1_equalize.jpeg", img_trans_eq,params);
+    imwrite("../Results/Image1_Histogram_original.jpeg", hist_orig,params);
+    imwrite("../Results/Image1_Histogram_filter1.jpeg", hist_filter1_eq,params);
+    mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    imwrite("../Results/Image1_Magnitude.jpeg", mag_orig,params);
 
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)

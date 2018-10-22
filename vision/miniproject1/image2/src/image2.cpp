@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     z_min = 50;
     z_max = 225;
-    max_win_size = 7;
+    max_win_size = 5;
     Mat filter_img2 = adapt_med_filter(img_original, z_min, z_max, max_win_size);
 
     z_min = 50;
@@ -109,19 +109,35 @@ int main(int argc, char *argv[]) {
     /**************************************************************************
      ***********************save images and histograms*************************
      **************************************************************************/
-    imwrite("../Results/Image2_Filter1.png", filter_img1);
-    imwrite("../Results/Image2_Filter2.png", filter_img2);
-    imwrite("../Results/Image2_Filter3.png", filter_img3);
-    imwrite("../Results/Image2_Filter4.png", filter_img4);
-    imwrite("../Results/Image2_Filter1_mean.png", filter_mean_img);
-    imwrite("../Results/Image2_Filter1_mean_equalize.png", img_trans_eq);
-    imwrite("../Results/Image2_Histogram_original.png", hist_orig);
-    imwrite("../Results/Image2_Histogram_filter1.png", hist_filter);
-    imwrite("../Results/Image2_Histogram_filter1_mean.png", hist_filter_mean);
-    imwrite("../Results/Image2_Histogram_filter1_mean_equalize.png", hist_filter_mean_eq);
-    mag_orig.convertTo(mag_orig, CV_8UC1, 255);
-    imwrite("../Results/Image2_Magnitude.png", mag_orig);
+    // imwrite("../Results/Image2_Filter1.png", filter_img1);
+    // imwrite("../Results/Image2_Filter2.png", filter_img2);
+    // imwrite("../Results/Image2_Filter3.png", filter_img3);
+    // imwrite("../Results/Image2_Filter4.png", filter_img4);
+    // imwrite("../Results/Image2_Filter1_mean.png", filter_mean_img);
+    // imwrite("../Results/Image2_Filter1_mean_equalize.png", img_trans_eq);
+    // imwrite("../Results/Image2_Histogram_original.png", hist_orig);
+    // imwrite("../Results/Image2_Histogram_filter1.png", hist_filter);
+    // imwrite("../Results/Image2_Histogram_filter1_mean.png", hist_filter_mean);
+    // imwrite("../Results/Image2_Histogram_filter1_mean_equalize.png", hist_filter_mean_eq);
+    // mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    // imwrite("../Results/Image2_Magnitude.png", mag_orig);
 
+    std::vector<int> params;
+    params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    params.push_back(25);
+    imwrite("../Results/Image2_Filter1.jpeg", filter_img1,params);
+    imwrite("../Results/Image2_Filter2.jpeg", filter_img2,params);
+    imwrite("../Results/Image2_Filter3.jpeg", filter_img3,params);
+    imwrite("../Results/Image2_Filter4.jpeg", filter_img4,params);
+    imwrite("../Results/Image2_Filter1_mean.jpeg", filter_mean_img,params);
+    imwrite("../Results/Image2_Filter1_mean_equalize.jpeg", img_trans_eq,params);
+    imwrite("../Results/Image2_Histogram_original.jpeg", hist_orig,params);
+    imwrite("../Results/Image2_Histogram_filter1.jpeg", hist_filter,params);
+    imwrite("../Results/Image2_Histogram_filter1_mean.jpeg", hist_filter_mean,params);
+    imwrite("../Results/Image2_Histogram_filter1_mean_equalize.jpeg", hist_filter_mean_eq,params);
+    mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    imwrite("../Results/Image2_Magnitude.jpeg", mag_orig,params);
+    
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)
 
