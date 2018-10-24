@@ -1,0 +1,3 @@
+/home/student/Downloads/ROVI01/robotics/miniproject2/build/CMakeFiles/rebuild_cache.dir
+/home/student/Downloads/ROVI01/robotics/miniproject2/build/CMakeFiles/pathplanning.dir
+/home/student/Downloads/ROVI01/robotics/miniproject2/build/CMakeFiles/edit_cache.dir

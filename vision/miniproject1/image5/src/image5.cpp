@@ -75,7 +75,10 @@ int main(int argc, char *argv[]) {
      ************************image correction**********************************
      **************************************************************************/
     mag = wiener_filter(mag, 1, 1);
-
+    Mat lap_filter=laplacian_filter(img_original);
+    Mat sob_filter=sobel_filter(img_original);
+    Mat hist_lap = histogram_creation(lap_filter);
+    Mat hist_sob = histogram_creation(sob_filter);
     // Shift back quadrants of the spectrum
     dftshift(mag);
 
@@ -102,6 +105,24 @@ int main(int argc, char *argv[]) {
     normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
     imshow_res("original image", img_original, img_original.cols / 2, img_original.rows / 2);
     imshow_res("Magnitude", mag,mag.rows/4,mag.cols/4);
+
+    /**************************************************************************
+     ***********************save images and histograms*************************
+     **************************************************************************/
+    std::vector<int> params;
+    params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    params.push_back(25);
+    filtered_img.convertTo(filtered_img, CV_8UC1, 255);
+    imwrite("../Results/Image5_wiener.jpeg", filtered_img,params);
+    imwrite("../Results/Image5_Histogram_original.jpeg", hist_orig,params);
+    imwrite("../Results/Image5_laplacian.jpeg", lap_filter,params);
+    imwrite("../Results/Image5_sobel.jpeg", sob_filter,params);
+    imwrite("../Results/Image5_Histogram_laplacian.jpeg", hist_lap,params);
+    imwrite("../Results/Image5_Histogram_sobel.jpeg", hist_sob,params);
+    mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    imwrite("../Results/Image5_Magnitude_original.jpeg", mag_orig,params);
+    mag.convertTo(mag, CV_8UC1, 255);
+    imwrite("../Results/Image5_Magnitude_wiener.jpeg", mag,params);
 
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)
