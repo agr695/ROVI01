@@ -44,15 +44,34 @@ int main(int argc, char** argv) {
 	rw::math::Math::seed();
 	const string wcFile = "../Kr16WallWorkCell/Scene.wc.xml";
 	const string deviceName = "KukaKr16";
+	const string bottleName = "Bottle";
+	const string gripName = "Tool";
+
+
 	cout << "Trying to use workcell " << wcFile << " and device " << deviceName << endl;
 
 	WorkCell::Ptr wc = WorkCellLoader::Factory::load(wcFile);
 	Device::Ptr device = wc->findDevice(deviceName);
+	Frame* frameBottle = wc->findFrame(bottleName);
+	Frame* frameGrip = wc->findFrame(gripName);
+
 	if (device == NULL) {
 		cerr << "Device: " << deviceName << " not found!" << endl;
 		return 0;
 	}
-	const State state = wc->getDefaultState();
+
+	if (frameBottle == NULL) {
+		cerr << "frame: " << bottleName << " not found!" << endl;
+		return 0;
+	}
+	if (frameGrip == NULL) {
+		cerr << "frame: " << gripName << " not found!" << endl;
+		return 0;
+	}
+
+	State state = wc->getDefaultState();
+
+	Kinematics::gripFrame(frameBottle,frameGrip,state);
 
 	CollisionDetector detector(wc, ProximityStrategyFactory::makeDefaultCollisionStrategy());
 	PlannerConstraint constraint = PlannerConstraint::make(&detector,device,state);
@@ -66,8 +85,6 @@ int main(int argc, char** argv) {
 	/** More complex way: allows more detailed definition of parameters and methods */
 	QSampler::Ptr sampler = QSampler::makeConstrained(QSampler::makeUniform(device),constraint.getQConstraintPtr());
 	QMetric::Ptr metric = MetricFactory::makeEuclidean<Q>();
-	double extend = 0.5;
-	QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner(constraint, sampler, metric, extend, RRTPlanner::RRTConnect);
 
 	Q from(6,-3.142,-0.827,-3.002,-3.143,0.099,-1.573);
 	//Q to(6,1.7,0.6,-0.8,0.3,0.7,-0.5); // Very difficult for planner
@@ -78,23 +95,46 @@ int main(int argc, char** argv) {
 	if (!checkCollisions(device, state, detector, to))
 		return 0;
 
-	cout << "Planning from " << from << " to " << to << endl;
-	QPath path;
+
+	double extend;
+	QPath path[301];
 	Timer t;
-	t.resetAndResume();
-	planner->query(from,to,path,MAXTIME);
-	t.pause();
-	cout << "Path of length " << path.size() << " found in " << t.getTime() << " seconds." << endl;
-	if (t.getTime() >= MAXTIME) {
-		cout << "Notice: max time of " << MAXTIME << " seconds reached." << endl;
-	}
+	QToQPlanner::Ptr planner;
+	int index=0;
 
-	for (QPath::iterator it = path.begin(); it < path.end(); it++) {
-		cout << *it << endl;
-	}
+	float length_prev=0;
+	ofstream time_file;
+	time_file.open ("time.txt",ios::out|ios::trunc);
 
-	cout << "Program done." << endl;
-	export2LUA(path);
+	ofstream path_file;
+	path_file.open ("path_size.txt",ios::out|ios::trunc);
+
+	for(extend=0.01; extend <=3.01; extend+=0.01){
+		// rw::math::Math::seed(extend*100);
+		planner = RRTPlanner::makeQToQPlanner(constraint, sampler, metric, extend, RRTPlanner::RRTConnect);
+		t.resetAndResume();
+		planner->query(from,to,path[index],MAXTIME);
+		t.pause();
+
+		cout << "Path "<< index <<" of length " << path[index].size() << " found in " << t.getTime() << " seconds." << endl;
+		if (t.getTime() >= MAXTIME) {
+			cout << "Notice: max time of " << MAXTIME << " seconds reached." << endl;
+		}
+
+		time_file << t.getTime();
+		time_file << "\n";
+
+		path_file << path[index].size()-length_prev;
+		path_file << "\n";
+
+		index++;
+		// length_prev=path.size();
+	}
+	time_file.close();
+	path_file.close();
+	export2LUA(path[25]);
+
+	cout << "program finish \n";
 	return 0;
 }
 
