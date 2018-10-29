@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_2
+CMAKE_SOURCE_DIR = /home/student/Downloads/ROVI01/vision/miniproject1/image4_2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_2/build
+CMAKE_BINARY_DIR = /home/student/Downloads/ROVI01/vision/miniproject1/image4_2/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_2/build/CMakeFiles /home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_2/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Downloads/ROVI01/vision/miniproject1/image4_2/build/CMakeFiles /home/student/Downloads/ROVI01/vision/miniproject1/image4_2/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_2/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Downloads/ROVI01/vision/miniproject1/image4_2/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,44 +111,44 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named image4
+# Target rules for targets named image4_2
 
 # Build rule for target.
-image4: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 image4
-.PHONY : image4
+image4_2: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 image4_2
+.PHONY : image4_2
 
 # fast build rule for target.
-image4/fast:
-	$(MAKE) -f CMakeFiles/image4.dir/build.make CMakeFiles/image4.dir/build
-.PHONY : image4/fast
+image4_2/fast:
+	$(MAKE) -f CMakeFiles/image4_2.dir/build.make CMakeFiles/image4_2.dir/build
+.PHONY : image4_2/fast
 
-src/image4.o: src/image4.cpp.o
+src/image4_2.o: src/image4_2.cpp.o
 
-.PHONY : src/image4.o
+.PHONY : src/image4_2.o
 
 # target to build an object file
-src/image4.cpp.o:
-	$(MAKE) -f CMakeFiles/image4.dir/build.make CMakeFiles/image4.dir/src/image4.cpp.o
-.PHONY : src/image4.cpp.o
+src/image4_2.cpp.o:
+	$(MAKE) -f CMakeFiles/image4_2.dir/build.make CMakeFiles/image4_2.dir/src/image4_2.cpp.o
+.PHONY : src/image4_2.cpp.o
 
-src/image4.i: src/image4.cpp.i
+src/image4_2.i: src/image4_2.cpp.i
 
-.PHONY : src/image4.i
+.PHONY : src/image4_2.i
 
 # target to preprocess a source file
-src/image4.cpp.i:
-	$(MAKE) -f CMakeFiles/image4.dir/build.make CMakeFiles/image4.dir/src/image4.cpp.i
-.PHONY : src/image4.cpp.i
+src/image4_2.cpp.i:
+	$(MAKE) -f CMakeFiles/image4_2.dir/build.make CMakeFiles/image4_2.dir/src/image4_2.cpp.i
+.PHONY : src/image4_2.cpp.i
 
-src/image4.s: src/image4.cpp.s
+src/image4_2.s: src/image4_2.cpp.s
 
-.PHONY : src/image4.s
+.PHONY : src/image4_2.s
 
 # target to generate assembly for a file
-src/image4.cpp.s:
-	$(MAKE) -f CMakeFiles/image4.dir/build.make CMakeFiles/image4.dir/src/image4.cpp.s
-.PHONY : src/image4.cpp.s
+src/image4_2.cpp.s:
+	$(MAKE) -f CMakeFiles/image4_2.dir/build.make CMakeFiles/image4_2.dir/src/image4_2.cpp.s
+.PHONY : src/image4_2.cpp.s
 
 # Help Target
 help:
@@ -157,11 +157,11 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... image4"
+	@echo "... image4_2"
 	@echo "... edit_cache"
-	@echo "... src/image4.o"
-	@echo "... src/image4.i"
-	@echo "... src/image4.s"
+	@echo "... src/image4_2.o"
+	@echo "... src/image4_2.i"
+	@echo "... src/image4_2.s"
 .PHONY : help
 
 

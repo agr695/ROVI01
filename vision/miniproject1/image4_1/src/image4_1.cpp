@@ -1,6 +1,6 @@
 /*
   RoVi1
-    miniproject image4
+    miniproject image4_1
 */
 
 #include "../../lib/functions.h"
@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     cv::CommandLineParser parser(argc, argv,
             // name  | default value    | help message
                                  "{help   |                  | print this message}"
-                                 "{@image | ../Image4_2.png | image path}"
+                                 "{@image | ../Image4_1.png | image path}"
     );
 
     if (parser.has("help")) {
@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
      ************************Problem detection*********************************
      **************************************************************************/
     Mat hist_orig = histogram_creation(img_original);   //histogram original
+
     cv::Mat padded;
     int opt_rows = cv::getOptimalDFTSize(img_original.rows * 2 - 1);
     int opt_cols = cv::getOptimalDFTSize(img_original.cols * 2 - 1);
@@ -73,7 +74,13 @@ int main(int argc, char *argv[]) {
     /**************************************************************************
      ************************image correction**********************************
      **************************************************************************/
-     mag=remove_circunference(mag,150,825);
+     int M=mag.rows;
+     int N=mag.cols;
+     mag=remove_point(mag,60,N/2+sqrt(2)*875/2,M/2-sqrt(2)* 875/2);
+     mag=remove_point(mag,60,N/2-sqrt(2)*875/2,M/2+sqrt(2)* 875/2);
+     mag=remove_point(mag,60,N/2+sqrt(2)*875/6,M/2+sqrt(2)* 875/6);
+     mag=remove_point(mag,60,N/2-sqrt(2)*875/6,M/2-sqrt(2)* 875/6);
+
      // Shift back quadrants of the spectrum
      dftshift(mag);
 
@@ -102,29 +109,30 @@ int main(int argc, char *argv[]) {
     cv::log(mag, mag);
     normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
     imshow_res("original image", img_original, img_original.cols / 2, img_original.rows / 2);
-    imshow_res("Magnitude", mag,img_original.rows/4,img_original.cols/4);
+    imshow_res("Magnitude", mag,mag.rows/4,mag.cols/4);
 
     /**************************************************************************
      ***********************save images and histograms*************************
      **************************************************************************/
-    // filtered.convertTo(filtered, CV_8UC1, 255);
-    // imwrite("../Results/Image4_2_Filter.png", filtered);
-    // imwrite("../Results/Image4_2_Histogram_original.png", hist_orig);
-    // mag_orig.convertTo(mag_orig, CV_8UC1, 255);
-    // imwrite("../Results/Image4_2_Magnitude_original.png", mag_orig);
-    // mag.convertTo(mag, CV_8UC1, 255);
-    // imwrite("../Results/Image4_2_Magnitude_filtered.png", mag);
-
-    std::vector<int> params;
-    params.push_back(CV_IMWRITE_JPEG_QUALITY);
-    params.push_back(25);
     filtered.convertTo(filtered, CV_8UC1, 255);
-    imwrite("../Results/Image4_2_Filter.jpeg", filtered,params);
-    imwrite("../Results/Image4_2_Histogram_original.jpeg", hist_orig,params);
+    imwrite("../Results/Image4_1_Filter.png", filtered);
+    imwrite("../Results/Image4_1_Histogram_original.png", hist_orig);
     mag_orig.convertTo(mag_orig, CV_8UC1, 255);
-    imwrite("../Results/Image4_2_Magnitude_original.jpeg", mag_orig,params);
+    imwrite("../Results/Image4_1_Magnitude_original.png", mag_orig);
     mag.convertTo(mag, CV_8UC1, 255);
-    imwrite("../Results/Image4_2_Magnitude_filtered.jpeg", mag,params);
+    imwrite("../Results/Image4_1_Magnitude_filtered.png", mag);
+
+    // std::vector<int> params;
+    // params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    // params.push_back(25);
+    // filtered.convertTo(filtered, CV_8UC1, 255);
+    // imwrite("../Results/Image4_1_Filter.jpeg", filtered,params);
+    // imwrite("../Results/Image4_1_Histogram_original.jpeg", hist_orig,params);
+    // mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    // imwrite("../Results/Image4_1_Magnitude_original.jpeg", mag_orig,params);
+    // mag.convertTo(mag, CV_8UC1, 255);
+    // imwrite("../Results/Image4_1_Magnitude_filtered.jpeg", mag,params);
+
 
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)

@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_2/src/image4.cpp" "/home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_2/build/CMakeFiles/image4.dir/src/image4.cpp.o"
+  "/home/student/Downloads/ROVI01/vision/miniproject1/image4_2/src/image4_2.cpp" "/home/student/Downloads/ROVI01/vision/miniproject1/image4_2/build/CMakeFiles/image4_2.dir/src/image4_2.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

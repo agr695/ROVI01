@@ -6,17 +6,17 @@
 
 #IncludeRegexTransform: 
 
-/home/student/Downloads/vision/ROVI01/vision/miniproject1/image5/src/image5.cpp
+/home/student/Downloads/ROVI01/vision/miniproject1/image5/src/image5.cpp
 ../../lib/functions.h
-/home/student/Downloads/vision/ROVI01/vision/miniproject1/lib/functions.h
+/home/student/Downloads/ROVI01/vision/miniproject1/lib/functions.h
 
-/home/student/Downloads/vision/ROVI01/vision/miniproject1/lib/functions.h
+/home/student/Downloads/ROVI01/vision/miniproject1/lib/functions.h
 opencv2/highgui.hpp
 -
 opencv2/imgcodecs.hpp
-/home/student/Downloads/vision/ROVI01/vision/miniproject1/lib/opencv2/imgcodecs.hpp
+/home/student/Downloads/ROVI01/vision/miniproject1/lib/opencv2/imgcodecs.hpp
 opencv2/opencv.hpp
-/home/student/Downloads/vision/ROVI01/vision/miniproject1/lib/opencv2/opencv.hpp
+/home/student/Downloads/ROVI01/vision/miniproject1/lib/opencv2/opencv.hpp
 iostream
 -
 stdio.h

@@ -54,45 +54,45 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_1
+CMAKE_SOURCE_DIR = /home/student/Downloads/ROVI01/vision/miniproject1/image4_1
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_1/build
+CMAKE_BINARY_DIR = /home/student/Downloads/ROVI01/vision/miniproject1/image4_1/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/image4.dir
+# Target rules for target CMakeFiles/image4_1.dir
 
 # All Build rule for target.
-CMakeFiles/image4.dir/all:
-	$(MAKE) -f CMakeFiles/image4.dir/build.make CMakeFiles/image4.dir/depend
-	$(MAKE) -f CMakeFiles/image4.dir/build.make CMakeFiles/image4.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_1/build/CMakeFiles --progress-num=1,2 "Built target image4"
-.PHONY : CMakeFiles/image4.dir/all
+CMakeFiles/image4_1.dir/all:
+	$(MAKE) -f CMakeFiles/image4_1.dir/build.make CMakeFiles/image4_1.dir/depend
+	$(MAKE) -f CMakeFiles/image4_1.dir/build.make CMakeFiles/image4_1.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/student/Downloads/ROVI01/vision/miniproject1/image4_1/build/CMakeFiles --progress-num=1,2 "Built target image4_1"
+.PHONY : CMakeFiles/image4_1.dir/all
 
 # Include target in all.
-all: CMakeFiles/image4.dir/all
+all: CMakeFiles/image4_1.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/image4.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_1/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/image4.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Downloads/vision/ROVI01/vision/miniproject1/image4_1/build/CMakeFiles 0
-.PHONY : CMakeFiles/image4.dir/rule
+CMakeFiles/image4_1.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Downloads/ROVI01/vision/miniproject1/image4_1/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/image4_1.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/student/Downloads/ROVI01/vision/miniproject1/image4_1/build/CMakeFiles 0
+.PHONY : CMakeFiles/image4_1.dir/rule
 
 # Convenience name for target.
-image4: CMakeFiles/image4.dir/rule
+image4_1: CMakeFiles/image4_1.dir/rule
 
-.PHONY : image4
-
-# clean rule for target.
-CMakeFiles/image4.dir/clean:
-	$(MAKE) -f CMakeFiles/image4.dir/build.make CMakeFiles/image4.dir/clean
-.PHONY : CMakeFiles/image4.dir/clean
+.PHONY : image4_1
 
 # clean rule for target.
-clean: CMakeFiles/image4.dir/clean
+CMakeFiles/image4_1.dir/clean:
+	$(MAKE) -f CMakeFiles/image4_1.dir/build.make CMakeFiles/image4_1.dir/clean
+.PHONY : CMakeFiles/image4_1.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/image4_1.dir/clean
 
 .PHONY : clean
 

@@ -109,20 +109,29 @@ int main(int argc, char *argv[]) {
     /**************************************************************************
      ***********************save images and histograms*************************
      **************************************************************************/
-    std::vector<int> params;
-    params.push_back(CV_IMWRITE_JPEG_QUALITY);
-    params.push_back(25);
-    filtered_img.convertTo(filtered_img, CV_8UC1, 255);
-    imwrite("../Results/Image5_wiener.jpeg", filtered_img,params);
-    imwrite("../Results/Image5_Histogram_original.jpeg", hist_orig,params);
-    imwrite("../Results/Image5_laplacian.jpeg", lap_filter,params);
-    imwrite("../Results/Image5_sobel.jpeg", sob_filter,params);
-    imwrite("../Results/Image5_Histogram_laplacian.jpeg", hist_lap,params);
-    imwrite("../Results/Image5_Histogram_sobel.jpeg", hist_sob,params);
+    imwrite("../Results/Image5_laplacian.png", lap_filter);
+    imwrite("../Results/Image5_sobel.png", sob_filter);
+    imwrite("../Results/Image5_Histogram_original.png", hist_orig);
+    imwrite("../Results/Image5_Histogram_laplacian.png", hist_lap);
+    imwrite("../Results/Image5_Histogram_sobel.png", hist_sob);
     mag_orig.convertTo(mag_orig, CV_8UC1, 255);
-    imwrite("../Results/Image5_Magnitude_original.jpeg", mag_orig,params);
-    mag.convertTo(mag, CV_8UC1, 255);
-    imwrite("../Results/Image5_Magnitude_wiener.jpeg", mag,params);
+    imwrite("../Results/Image4_2_Magnitude_original.png", mag_orig);
+
+
+    // std::vector<int> params;
+    // params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    // params.push_back(25);
+    // filtered_img.convertTo(filtered_img, CV_8UC1, 255);
+    // imwrite("../Results/Image5_wiener.jpeg", filtered_img,params);
+    // imwrite("../Results/Image5_Histogram_original.jpeg", hist_orig,params);
+    // imwrite("../Results/Image5_laplacian.jpeg", lap_filter,params);
+    // imwrite("../Results/Image5_sobel.jpeg", sob_filter,params);
+    // imwrite("../Results/Image5_Histogram_laplacian.jpeg", hist_lap,params);
+    // imwrite("../Results/Image5_Histogram_sobel.jpeg", hist_sob,params);
+    // mag_orig.convertTo(mag_orig, CV_8UC1, 255);
+    // imwrite("../Results/Image5_Magnitude_original.jpeg", mag_orig,params);
+    // mag.convertTo(mag, CV_8UC1, 255);
+    // imwrite("../Results/Image5_Magnitude_wiener.jpeg", mag,params);
 
     // Wait for escape key press before returning
     while (cv::waitKey() != 27); // (do nothing)

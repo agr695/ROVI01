@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(image4)
+project(image4_1)
 
 # Enable C++11
 set(CMAKE_CXX_STANDARD 11)
@@ -14,5 +14,5 @@ if((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "GN
 endif()
 
 # Target executable
-add_executable(image4 src/image4.cpp)
-target_link_libraries(image4 ${OpenCV_LIBS})
+add_executable(image4_1 src/image4_1.cpp)
+target_link_libraries(image4_1 ${OpenCV_LIBS})
