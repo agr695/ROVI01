@@ -41,6 +41,21 @@ bool checkCollisions(Device::Ptr device, const State &state, const CollisionDete
 }
 
 int main(int argc, char** argv) {
+	bool Debug=false;
+	if(argc!=1){
+		string in_str(argv[1]);
+		if(in_str.compare("Debug")==0){
+			cout<<"Debug enable, this may take a while"<<endl;
+			cout<<"The program will run 100 diferents path for 60 diferents epsilon"<<endl;
+			cout<<"The output wil be in 2 .txt file for a matlab analisis"<<endl<<endl;
+			Debug=true;
+		}
+	}
+	else{
+		cout<<"To run statistics experiment run this program with \"Debug\" as command line parameter";
+		cout<<endl<<endl;
+	}
+
 	rw::math::Math::seed();
 	const string wcFile = "../Kr16WallWorkCell/Scene.wc.xml";
 	const string deviceName = "KukaKr16";
@@ -95,45 +110,66 @@ int main(int argc, char** argv) {
 	if (!checkCollisions(device, state, detector, to))
 		return 0;
 
+	if(Debug){
+		double extend;
+		QPath path[50][61];
+		Timer t;
+		QToQPlanner::Ptr planner;
+		int index=0;
 
-	double extend;
-	QPath path[301];
-	Timer t;
-	QToQPlanner::Ptr planner;
-	int index=0;
+		ofstream time_file;
+		time_file.open ("time.txt",ios::out|ios::trunc);
 
-	float length_prev=0;
-	ofstream time_file;
-	time_file.open ("time.txt",ios::out|ios::trunc);
+		ofstream path_file;
+		path_file.open ("path_size.txt",ios::out|ios::trunc);
+		for(int i=0;i<50;i++){
+			cout<<"seed="<<i<<endl;
+			index=0;
+			rw::math::Math::seed(i);
+			for(extend=0.01; extend <=3.01; extend+=0.05){
+				planner = RRTPlanner::makeQToQPlanner(constraint, sampler, metric, extend, RRTPlanner::RRTConnect);
+				t.resetAndResume();
+				planner->query(from,to,path[i][index],MAXTIME);
+				t.pause();
 
-	ofstream path_file;
-	path_file.open ("path_size.txt",ios::out|ios::trunc);
+				cout << "Path "<< index <<" of length " << path[i][index].size() << " found in " << t.getTime() << " seconds." << endl;
+				if (t.getTime() >= MAXTIME) {
+					cout << "Notice: max time of " << MAXTIME << " seconds reached." << endl;
+				}
 
-	for(extend=0.01; extend <=3.01; extend+=0.01){
-		// rw::math::Math::seed(extend*100);
+				time_file << t.getTime();
+				time_file << "\t";
+
+				path_file << path[i][index].size();
+				path_file << "\t";
+
+				index++;
+			}
+			time_file << "\n";
+			path_file << "\n";
+
+		}
+		time_file.close();
+		path_file.close();
+		export2LUA(path[1][25]);
+	}
+	else{
+		double extend=1.5;
+		QPath path;
+		Timer t;
+		QToQPlanner::Ptr planner;
+
 		planner = RRTPlanner::makeQToQPlanner(constraint, sampler, metric, extend, RRTPlanner::RRTConnect);
 		t.resetAndResume();
-		planner->query(from,to,path[index],MAXTIME);
+		planner->query(from,to,path,MAXTIME);
 		t.pause();
 
-		cout << "Path "<< index <<" of length " << path[index].size() << " found in " << t.getTime() << " seconds." << endl;
+		cout << "Path of length " << path.size() << " found in " << t.getTime() << " seconds." << endl;
 		if (t.getTime() >= MAXTIME) {
 			cout << "Notice: max time of " << MAXTIME << " seconds reached." << endl;
 		}
-
-		time_file << t.getTime();
-		time_file << "\n";
-
-		path_file << path[index].size()-length_prev;
-		path_file << "\n";
-
-		index++;
-		// length_prev=path.size();
+		export2LUA(path);
 	}
-	time_file.close();
-	path_file.close();
-	export2LUA(path[25]);
-
 	cout << "program finish \n";
 	return 0;
 }
