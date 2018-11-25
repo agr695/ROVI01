@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
 		export2LUA(path[1][25]);
 	}
 	else{
-		double extend=1.5;
+		double extend=1.41;
 		QPath path;
 		Timer t;
 		QToQPlanner::Ptr planner;
