@@ -13,7 +13,6 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QCalendarWidget>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QHeaderView>
@@ -38,13 +37,12 @@ public:
     QSpinBox *_spinBox;
     QSlider *_slider;
     QLabel *_label;
-    QCalendarWidget *_calendar;
 
     void setupUi(QDockWidget *SamplePlugin)
     {
         if (SamplePlugin->objectName().isEmpty())
             SamplePlugin->setObjectName(QStringLiteral("SamplePlugin"));
-        SamplePlugin->resize(428, 479);
+        SamplePlugin->resize(476, 209);
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
         verticalLayout_2 = new QVBoxLayout(dockWidgetContents);
@@ -81,11 +79,6 @@ public:
         _label->setObjectName(QStringLiteral("_label"));
 
         verticalLayout->addWidget(_label);
-
-        _calendar = new QCalendarWidget(dockWidgetContents);
-        _calendar->setObjectName(QStringLiteral("_calendar"));
-
-        verticalLayout->addWidget(_calendar);
 
 
         verticalLayout_2->addLayout(verticalLayout);
