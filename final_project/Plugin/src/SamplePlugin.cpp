@@ -110,6 +110,7 @@ void SamplePlugin::open(WorkCell* workcell)
   		}
   	}
 
+    // load device
     const std::string device_name = "PA10";
     _device = _wc->findDevice(device_name);
     if(_device == nullptr) {
@@ -117,6 +118,10 @@ void SamplePlugin::open(WorkCell* workcell)
     }
   }
 
+  // set initial joint configuration
+  rw::math::Q Q_init(7, 0, -0.65, 0, 1.80, 0, 0.42, 0);
+  _device->setQ(Q_init, _state);
+	getRobWorkStudio()->setState(_state);
   /*load motion file*/
   _poses=read_marker_motion_file("/home/student/Downloads/ROVI01/final_project/Plugin/motions/MarkerMotionSlow.txt");
 }
@@ -177,25 +182,24 @@ void SamplePlugin::btnPressed() {
 
 void SamplePlugin::timer() {
   static int index=0;
-  Frame* cameraFrame = _wc->findFrame("CameraSim");
-  Frame* markerFrame = _wc->findFrame("Marker");
-  static rw::math::Vector2D<double> prevU=get_newU_1point(markerFrame, cameraFrame);
 
   // Frame* camera = _wc->findFrame("Camera");
   MovableFrame* marker = (MovableFrame*) _wc->findFrame("Marker");
 
-  rw::math::Vector3D<> worldPOSmarker(_poses[index][0], _poses[index][1], _poses[index][2]);
-  rw::math::RPY<> worldROTmarker(_poses[index][3], _poses[index][4], _poses[index][5]);
+  rw::math::Vector3D<double> worldPOSmarker(_poses[index][0], _poses[index][1], _poses[index][2]);
+  rw::math::RPY<double> worldROTmarker(_poses[index][3], _poses[index][4], _poses[index][5]);
 
-  rw::math::Transform3D<> worldRmarker(worldPOSmarker, worldROTmarker.toRotation3D());
+  rw::math::Transform3D<double> worldRmarker(worldPOSmarker, worldROTmarker.toRotation3D());
 
   marker->moveTo(worldRmarker, _state);
 
 
 	if (_framegrabber != NULL) {
 		// Get the image as a RW image
-		// Frame* cameraFrame = _wc->findFrame("CameraSim");
-    // Frame* markerFrame = _wc->findFrame("Marker");
+    Frame* cameraFrame = _wc->findFrame("CameraSim");
+    Frame* camera = _wc->findFrame("Camera");
+    Frame* markerFrame = _wc->findFrame("Marker");
+    static rw::math::Vector2D<double> prevU=get_newU_1point(markerFrame, camera);
 
 		_framegrabber->grab(cameraFrame, _state);
 		const Image& image = _framegrabber->getImage();
@@ -206,23 +210,25 @@ void SamplePlugin::timer() {
 		cv::flip(im, imflip, 0);
 
     //get previous joint configuration
-    rw::math::Q previousQ = _device->getQ(_state);
+    // rw::math::Q previousQ = _device->getQ(_state);
 
     // Get new image point:
-    rw::math::Vector2D<double> newU = get_newU_1point(markerFrame, cameraFrame);
+    rw::math::Vector2D<double> newU = get_newU_1point(markerFrame, camera);
 
     //compute Zimage
     rw::math::Jacobian Zimage(2,7);
-    Zimage=getZimage(_wc, _state, _device, newU,cameraFrame);
+    Zimage=getZimage(_wc, _state, _device, newU);
 
     //get pseudo inverse Zimage
     Eigen::MatrixXd Zimage_inverse;
     Zimage_inverse = pseudo_inverse_Zimage(Zimage);
 
     //compute new joint configuration
-    rw::math::Vector2D<double> dU=newU-prevU;
+    rw::math::Vector2D<double> dU=prevU-newU;
     rw::math::Q dq = compute_dq(dU, Zimage_inverse);
-    rw::math::Q newQ = previousQ + dq;
+
+    rw::math::Q newQ = _device->getQ(_state);
+    newQ += dq;
 
     //update robot state
     _device->setQ(newQ, _state);
@@ -238,22 +244,22 @@ void SamplePlugin::timer() {
 		_label->setPixmap(p.scaled(maxW,maxH,Qt::KeepAspectRatio));
 
     index++;
-    prevU=newU;
+    prevU = get_newU_1point(markerFrame, camera);
 	}
 }
 
-rw::math::Vector2D<double> SamplePlugin::get_newU_1point(Frame *marker, Frame *camera){
+rw::math::Vector2D<double> SamplePlugin::get_newU_1point(Frame *markerFrame, Frame *camera){
 
   rw::math::Vector2D<double> newU;
 
   // 3D coordinates of the center of the image
 	rw::math::Vector3D<double> markerpoint = rw::math::Vector3D<double>(0, 0, 0);
-	rw::math::Transform3D<double> cameraTmarker = rw::kinematics::Kinematics::frameTframe(camera, marker, _state); // inverse(marker->....)
+	rw::math::Transform3D<double> cameraTmarker = rw::kinematics::Kinematics::frameTframe(camera, markerFrame, _state); // inverse(marker->....)
 
   rw::math::Vector3D<double> cameraPOSmarker = cameraTmarker * markerpoint;
 
-  newU(0) = cameraPOSmarker[0] / cameraPOSmarker[2] * f;
-  newU(1) = cameraPOSmarker[1] / cameraPOSmarker[2] * f;
+  newU(0) = f * cameraPOSmarker[0] / cameraPOSmarker[2];
+  newU(1) = f * cameraPOSmarker[1] / cameraPOSmarker[2];
 
   return newU;
 
@@ -261,11 +267,11 @@ rw::math::Vector2D<double> SamplePlugin::get_newU_1point(Frame *marker, Frame *c
 
 rw::math::Jacobian SamplePlugin::getZimage(rw::models::WorkCell::Ptr wc,
                     rw::kinematics::State state, rw::models::Device::Ptr device,
-                    rw::math::Vector2D<> U, Frame* cameraFrame){
+                    rw::math::Vector2D<> U){
 
   Frame* camera = wc->findFrame("Camera");
 
-  rw::math::Jacobian Jq = device->baseJframe(cameraFrame, state);
+  rw::math::Jacobian Jq = device->baseJframe(camera, state);
   // std::cout << Jq.size1() << '\n';
   // std::cout << Jq.size2() << '\n';
 
@@ -291,9 +297,9 @@ rw::math::Jacobian SamplePlugin::getZimage(rw::models::WorkCell::Ptr wc,
   rw::math::Transform3D<> baseTcamera = device->baseTframe(camera, state);
 
   rw::math::Rotation3D<> baseRcam=baseTcamera.R();
-  inverse(baseRcam);
+  rw::math::Rotation3D<> baseRcam_inverse=inverse(baseRcam);
 
-  rw::math::Jacobian Sq=Jacobian(baseRcam);
+  rw::math::Jacobian Sq=Jacobian(baseRcam_inverse);
 
   rw::math::Jacobian Zimage(2,7);
   Zimage = Jimage * Sq * Jq;
@@ -312,7 +318,7 @@ rw::math::Q SamplePlugin::compute_dq(rw::math::Vector2D<double> dU, Eigen::Matri
 
   rw::math::Jacobian dq_jac(Zimage_inverse*dU.e());
 
-	// Convert to joint vector
+	// create joint vector
   rw::math::Q dq(dq_jac.e());
 
   return dq;

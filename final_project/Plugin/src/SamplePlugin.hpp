@@ -59,14 +59,14 @@ private:
     rw::models::Device::Ptr _device;
 
     /*own functions*/
-    rw::math::Vector2D<double> get_newU_1point(rw::kinematics::Frame* marker, rw::kinematics::Frame* camera);
+    rw::math::Vector2D<double> get_newU_1point(rw::kinematics::Frame* markerFrame, rw::kinematics::Frame* camera);
 
     rw::math::Jacobian getZimage(rw::models::WorkCell::Ptr wc,
                        rw::kinematics::State state, rw::models::Device::Ptr device,
-                       rw::math::Vector2D<> U, rw::kinematics::Frame* cameraFrame);
+                       rw::math::Vector2D<> U);
 
     Eigen::MatrixXd pseudo_inverse_Zimage(rw::math::Jacobian J);
-    
+
     rw::math::Q compute_dq(rw::math::Vector2D<double> dU, Eigen::MatrixXd Zimage_inverse);
 
 
