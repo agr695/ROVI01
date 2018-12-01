@@ -6,7 +6,6 @@ CMakeFiles/RoVi1PluginPA10.dir/qrc_resources.cpp.o
 CMakeFiles/RoVi1PluginPA10.dir/src/SamplePlugin.cpp.o
  /home/student/Downloads/ROVI01/final_project/Plugin/src/SamplePlugin.cpp
  /home/student/Downloads/ROVI01/final_project/Plugin/src/SamplePlugin.hpp
- /home/student/Downloads/ROVI01/final_project/Plugin/src/auxiliar_library.h
  /home/student/projects/robwork/RobWork/cmake/../ext/boostbindings/boost/numeric/bindings/lapack/geev.hpp
  /home/student/projects/robwork/RobWork/cmake/../ext/boostbindings/boost/numeric/bindings/lapack/gesvd.hpp
  /home/student/projects/robwork/RobWork/cmake/../ext/boostbindings/boost/numeric/bindings/lapack/lapack.h

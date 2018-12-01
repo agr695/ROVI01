@@ -57,9 +57,12 @@ private:
     /*own variables*/
     std::vector<std::vector<double>> _poses;
     rw::models::Device::Ptr _device;
+    std::vector<rw::math::Q> _jointConfigurations;
+    std::vector<rw::math::Transform3D<double>> _toolPoses;
 
     /*own functions*/
-    rw::math::Vector2D<double> get_newU_1point(rw::kinematics::Frame* markerFrame, rw::kinematics::Frame* camera);
+    rw::math::Vector2D<double> get_newU_1point(rw::kinematics::Frame* markerFrame,
+                                        rw::kinematics::Frame* camera);
 
     rw::math::Jacobian getZimage(rw::models::WorkCell::Ptr wc,
                        rw::kinematics::State state, rw::models::Device::Ptr device,
@@ -69,7 +72,12 @@ private:
 
     rw::math::Q compute_dq(rw::math::Vector2D<double> dU, Eigen::MatrixXd Zimage_inverse);
 
+    rw::math::Q checkLimits(rw::math::Q dq, double dt, rw::models::Device::Ptr device);
+
+    void save_jointConfiguration_toolPose_1point(std::vector<rw::math::Q> joint,
+                                std::vector<rw::math::Transform3D<double>> tool);
 
 };
+
 
 #endif /*RINGONHOOKPLUGIN_HPP_*/

@@ -21,8 +21,6 @@ QtCore/qplugin.h
 /home/student/Downloads/ROVI01/final_project/Plugin/src/SamplePlugin.cpp
 SamplePlugin.hpp
 /home/student/Downloads/ROVI01/final_project/Plugin/src/SamplePlugin.hpp
-auxiliar_library.h
-/home/student/Downloads/ROVI01/final_project/Plugin/src/auxiliar_library.h
 rws/RobWorkStudio.hpp
 -
 QPushButton
@@ -61,20 +59,6 @@ QTimer
 -
 ui_SamplePlugin.h
 /home/student/Downloads/ROVI01/final_project/Plugin/src/ui_SamplePlugin.h
-
-/home/student/Downloads/ROVI01/final_project/Plugin/src/auxiliar_library.h
-SamplePlugin.hpp
-/home/student/Downloads/ROVI01/final_project/Plugin/src/SamplePlugin.hpp
-rws/RobWorkStudio.hpp
--
-QPushButton
--
-rw/loaders/ImageLoader.hpp
--
-rw/loaders/WorkCellFactory.hpp
--
-functional
--
 
 /home/student/projects/robwork/RobWork/cmake/../ext/boostbindings/boost/numeric/bindings/lapack/geev.hpp
 boost/numeric/bindings/traits/traits.hpp
