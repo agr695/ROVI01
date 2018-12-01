@@ -59,14 +59,23 @@ private:
     rw::models::Device::Ptr _device;
     std::vector<rw::math::Q> _jointConfigurations;
     std::vector<rw::math::Transform3D<double>> _toolPoses;
+    bool _btn1_pressed = false;
+    bool _btn2_pressed = false;
 
     /*own functions*/
     rw::math::Vector2D<double> get_newU_1point(rw::kinematics::Frame* markerFrame,
                                         rw::kinematics::Frame* camera);
 
-    rw::math::Jacobian getZimage(rw::models::WorkCell::Ptr wc,
+    rw::math::Jacobian get_newU_3points(rw::kinematics::Frame* markerFrame,
+                                        rw::kinematics::Frame* camera);
+
+    rw::math::Jacobian getZimage_1point(rw::models::WorkCell::Ptr wc,
                        rw::kinematics::State state, rw::models::Device::Ptr device,
                        rw::math::Vector2D<> U);
+
+    rw::math::Jacobian getZimage_3points(rw::models::WorkCell::Ptr wc,
+                       rw::kinematics::State state, rw::models::Device::Ptr device,
+                       rw::math::Jacobian U);
 
     Eigen::MatrixXd pseudo_inverse_Zimage(rw::math::Jacobian J);
 
@@ -74,8 +83,9 @@ private:
 
     rw::math::Q checkLimits(rw::math::Q dq, double dt, rw::models::Device::Ptr device);
 
-    void save_jointConfiguration_toolPose_1point(std::vector<rw::math::Q> joint,
-                                std::vector<rw::math::Transform3D<double>> tool);
+    void save_jointConfiguration_toolPose(std::vector<rw::math::Q> joint,
+                                std::vector<rw::math::Transform3D<double>> tool,
+                                std::string joint_path, std::string tool_path);
 
 };
 

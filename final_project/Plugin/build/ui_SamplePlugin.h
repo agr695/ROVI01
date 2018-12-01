@@ -33,6 +33,7 @@ public:
     QVBoxLayout *verticalLayout;
     QPushButton *_btn0;
     QPushButton *_btn1;
+    QPushButton *_btn2;
     QCheckBox *_checkBox;
     QSpinBox *_spinBox;
     QSlider *_slider;
@@ -42,7 +43,7 @@ public:
     {
         if (SamplePlugin->objectName().isEmpty())
             SamplePlugin->setObjectName(QStringLiteral("SamplePlugin"));
-        SamplePlugin->resize(476, 209);
+        SamplePlugin->resize(476, 261);
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
         verticalLayout_2 = new QVBoxLayout(dockWidgetContents);
@@ -58,6 +59,11 @@ public:
         _btn1->setObjectName(QStringLiteral("_btn1"));
 
         verticalLayout->addWidget(_btn1);
+
+        _btn2 = new QPushButton(dockWidgetContents);
+        _btn2->setObjectName(QStringLiteral("_btn2"));
+
+        verticalLayout->addWidget(_btn2);
 
         _checkBox = new QCheckBox(dockWidgetContents);
         _checkBox->setObjectName(QStringLiteral("_checkBox"));
@@ -93,8 +99,9 @@ public:
     void retranslateUi(QDockWidget *SamplePlugin)
     {
         SamplePlugin->setWindowTitle(QApplication::translate("SamplePlugin", "DockWidget", Q_NULLPTR));
-        _btn0->setText(QApplication::translate("SamplePlugin", "PushButton0", Q_NULLPTR));
-        _btn1->setText(QApplication::translate("SamplePlugin", "PushButton1", Q_NULLPTR));
+        _btn0->setText(QApplication::translate("SamplePlugin", "Set Marker and background", Q_NULLPTR));
+        _btn1->setText(QApplication::translate("SamplePlugin", "Follow marker using one point (no Vision)", Q_NULLPTR));
+        _btn2->setText(QApplication::translate("SamplePlugin", "Follow marker using three point (no Vision)", Q_NULLPTR));
         _checkBox->setText(QApplication::translate("SamplePlugin", "CheckBox", Q_NULLPTR));
         _label->setText(QApplication::translate("SamplePlugin", "Label", Q_NULLPTR));
     } // retranslateUi
