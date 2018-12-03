@@ -167,7 +167,7 @@ void SamplePlugin::open(WorkCell* workcell)
   _device->setQ(Q_init, _state);
 	getRobWorkStudio()->setState(_state);
   /*load motion file*/
-  _poses=read_marker_motion_file(medium_marker_file_path);
+  _poses=read_marker_motion_file(fast_marker_file_path);
 }
 
 
@@ -218,7 +218,7 @@ void SamplePlugin::btnPressed() {
 		if (!_timer->isActive()){
         _btn1_pressed = true;
         _btn2_pressed = false;
-		    _timer->start(10/delta_t); //interval in hz=10/delta_t
+		    _timer->start(delta_t*1000); //interval in hz=10/delta_t
 		}else
 			_timer->stop();
 	} else if(obj==_btn2){
@@ -227,7 +227,7 @@ void SamplePlugin::btnPressed() {
 		if (!_timer->isActive()){
         _btn1_pressed = false;
         _btn2_pressed = true;
-		    _timer->start(10/delta_t); //interval in hz=10/delta_t
+		    _timer->start(delta_t*1000); //interval in hz=10/delta_t
 		}else
 			_timer->stop();
 	} else if(obj==_spinBox){
@@ -282,7 +282,7 @@ void SamplePlugin::timer() {
         //compute new joint configuration
         rw::math::Vector2D<double> dU=prevU-newU;
         rw::math::Q dq = compute_dq(dU, Zimage_inverse);
-        double dt = 10.0/(_timer->interval());
+        double dt = (_timer->interval())/1000;
         dq=checkLimits(dq, dt, _device);
 
         //update joint configuration
@@ -303,7 +303,7 @@ void SamplePlugin::timer() {
 
         //update static variables
         index++;
-        prevU = get_newU_1point(markerFrame, camera);
+        // prevU = get_newU_1point(markerFrame, camera);
         rw::math::Transform3D<double> tool_pose = _device->baseTframe(camera, _state);
         _jointConfigurations.push_back(newQ);
         _toolPoses.push_back(tool_pose);
@@ -350,7 +350,7 @@ void SamplePlugin::timer() {
 
         //get Zimage inverse
         Eigen::MatrixXd Zimage_inverse;
-        Zimage_inverse = LinearAlgebra::inverse(Zimage.e());
+        Zimage_inverse = LinearAlgebra::pseudoInverse(Zimage.e());
 
         //compute new joint configuration
         rw::math::Jacobian dU(prevU.e() - newU.e());
@@ -359,7 +359,7 @@ void SamplePlugin::timer() {
       	// create joint vector
         rw::math::Q dq(dq_jac.e());
 
-        double dt = 10.0/(_timer->interval());
+        double dt = (_timer->interval())/1000;
         dq=checkLimits(dq, dt, _device);
 
         //update joint configuration
@@ -380,7 +380,7 @@ void SamplePlugin::timer() {
 
         //update static variables
         index++;
-        prevU = get_newU_3points(markerFrame, camera);
+        // prevU = get_newU_3points(markerFrame, camera);
         rw::math::Transform3D<double> tool_pose = _device->baseTframe(camera, _state);
         _jointConfigurations.push_back(newQ);
         _toolPoses.push_back(tool_pose);
