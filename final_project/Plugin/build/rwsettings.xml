@@ -8,13 +8,13 @@
     <Property>
      <Name>AngleUnit</Name>
      <Value>
-      <String>Radians</String>
+      <String>Degrees</String>
      </Value>
     </Property>
     <Property>
      <Name>DistanceUnit</Name>
      <Value>
-      <String>Meters</String>
+      <String>Centimeters</String>
      </Value>
     </Property>
     <Property>
@@ -188,7 +188,7 @@
     <Property>
      <Name>PreviousOpenDirectory</Name>
      <Value>
-      <String>../libs/Release/</String>
+      <String/>
      </Value>
     </Property>
     <Property>

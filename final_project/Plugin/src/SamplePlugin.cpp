@@ -25,8 +25,10 @@
 //output files path
 #define joint_variable_file_1point "../output/joint_1point.txt"
 #define tool_pose_file_1point "../output/tool_pose_1point.txt"
+#define tracking_error_file_1point "../output/tracking_error_1point.txt"
 #define joint_variable_file_3points "../output/joint_3points.txt"
 #define tool_pose_file_3points "../output/tool_pose_3points.txt"
+#define tracking_error_file_3points "../output/tracking_error_3points.txt"
 
 using namespace rw::common;
 using namespace rw::graphics;
@@ -259,7 +261,7 @@ void SamplePlugin::timer() {
         Frame* camera = _wc->findFrame("Camera");
         Frame* markerFrame = _wc->findFrame("Marker");
         static rw::math::Vector2D<double> prevU=get_newU_1point(markerFrame, camera);
-
+        rw::math::Vector2D<double> realU;
     		_framegrabber->grab(cameraFrame, _state);
     		const Image& image = _framegrabber->getImage();
 
@@ -303,14 +305,17 @@ void SamplePlugin::timer() {
 
         //update static variables
         index++;
-        // prevU = get_newU_1point(markerFrame, camera);
+        realU = get_newU_1point(markerFrame, camera);
         rw::math::Transform3D<double> tool_pose = _device->baseTframe(camera, _state);
         _jointConfigurations.push_back(newQ);
         _toolPoses.push_back(tool_pose);
+        _tracking_error.push_back(get_distance(realU.e(), prevU.e()));
     	}
       if(index == _poses.size())
-        save_jointConfiguration_toolPose(_jointConfigurations, _toolPoses,
-                                         joint_variable_file_1point, tool_pose_file_1point);
+        save_jointConfiguration_toolPose_trackingError(_jointConfigurations, _toolPoses,
+                                         _tracking_error,
+                                         joint_variable_file_1point, tool_pose_file_1point,
+                                         tracking_error_file_1point);
     }
 
     /***************************************************************************
@@ -332,7 +337,7 @@ void SamplePlugin::timer() {
         Frame* camera = _wc->findFrame("Camera");
         Frame* markerFrame = _wc->findFrame("Marker");
         static rw::math::Jacobian prevU=get_newU_3points(markerFrame, camera);
-
+        rw::math::Jacobian realU(3,0);
     		_framegrabber->grab(cameraFrame, _state);
     		const Image& image = _framegrabber->getImage();
 
@@ -380,14 +385,17 @@ void SamplePlugin::timer() {
 
         //update static variables
         index++;
-        // prevU = get_newU_3points(markerFrame, camera);
+        realU = get_newU_3points(markerFrame, camera);
         rw::math::Transform3D<double> tool_pose = _device->baseTframe(camera, _state);
         _jointConfigurations.push_back(newQ);
         _toolPoses.push_back(tool_pose);
+        _tracking_error.push_back(get_distance(realU.e(), prevU.e()));
     	}
       if(index == _poses.size())
-        save_jointConfiguration_toolPose(_jointConfigurations, _toolPoses,
-                                        joint_variable_file_3points, tool_pose_file_3points);
+        save_jointConfiguration_toolPose_trackingError(_jointConfigurations, _toolPoses,
+                                        _tracking_error,
+                                        joint_variable_file_3points, tool_pose_file_3points,
+                                        tracking_error_file_3points);
     }
   }
 }
@@ -567,10 +575,22 @@ rw::math::Q SamplePlugin::checkLimits(Q dq, double dt, rw::models::Device::Ptr d
   return actual_dq;
 }
 
+
+std::vector<double> SamplePlugin::get_distance(Eigen::MatrixXd real, Eigen::MatrixXd reference){
+  std::vector<double> distance;
+  for (int i = 0; i < real.size()/2; i++) {
+    distance.push_back(sqrt((real(i,0)-reference(i,0))*(real(i,0)-reference(i,0))+
+                            (real(i+1,0)-reference(i+1,0))*(real(i+1,0)-reference(i+1,0))));
+  }
+  return distance;
+}
+
 // save joint configuration and tool pose
-void SamplePlugin::save_jointConfiguration_toolPose(std::vector<rw::math::Q> joint,
-                                                std::vector<rw::math::Transform3D<double>> tool,
-                                                std::string joint_path, std::string tool_path){
+void SamplePlugin::save_jointConfiguration_toolPose_trackingError(std::vector<rw::math::Q> joint,
+                                    std::vector<rw::math::Transform3D<double>> tool,
+                                    std::vector<std::vector<double>> tracking_error,
+                                    std::string joint_path, std::string tool_path,
+                                    std::string error_path){
 
   ofstream joint_file;
   joint_file.open(joint_path);
@@ -593,6 +613,16 @@ void SamplePlugin::save_jointConfiguration_toolPose(std::vector<rw::math::Q> joi
     tool_file <<"\n";
   }
   tool_file.close();
+
+  ofstream error_file;
+  error_file.open(error_path);
+  for (size_t i = 0; i < tracking_error.size(); i++) {
+    for (size_t j = 0; j < tracking_error[i].size(); j++) {
+      error_file << tracking_error[i][j] << "\t";
+    }
+    error_file << "\n";
+  }
+  error_file.close();
 }
 
 void SamplePlugin::stateChangedListener(const State& state) {

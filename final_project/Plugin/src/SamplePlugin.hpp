@@ -59,6 +59,7 @@ private:
     rw::models::Device::Ptr _device;
     std::vector<rw::math::Q> _jointConfigurations;
     std::vector<rw::math::Transform3D<double>> _toolPoses;
+    std::vector<std::vector<double>> _tracking_error;
     bool _btn1_pressed = false;
     bool _btn2_pressed = false;
 
@@ -83,9 +84,13 @@ private:
 
     rw::math::Q checkLimits(rw::math::Q dq, double dt, rw::models::Device::Ptr device);
 
-    void save_jointConfiguration_toolPose(std::vector<rw::math::Q> joint,
+    std::vector<double> get_distance(Eigen::MatrixXd real, Eigen::MatrixXd reference);
+
+    void save_jointConfiguration_toolPose_trackingError(std::vector<rw::math::Q> joint,
                                 std::vector<rw::math::Transform3D<double>> tool,
-                                std::string joint_path, std::string tool_path);
+                                std::vector<std::vector<double>> tracking_error,
+                                std::string joint_path, std::string tool_path,
+                                std::string error_path);
 
 };
 
