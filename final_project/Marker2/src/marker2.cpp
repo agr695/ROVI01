@@ -29,7 +29,7 @@ const string hard_sequence_path = "/home/student/Downloads/marker_thinline_hard/
 //minimum distance to be considerated the same point in pixels
 #define minimum_distance_between_points 30
 //minimum number of points around a position to be part of the marker
-#define minimum_number_of_points 10
+#define minimum_number_of_points 7
 
 /******************************************************************************
  *******************************functions used ********************************
@@ -107,6 +107,7 @@ int main(int argc, char *argv[]) {
 
 void get_marker2(Mat img_original, int image_number){
   cv::Mat img_canny;
+  cv::Mat img_canny_closed;
   cv::Mat img_hough;
   vector<Vec4i> lines;
   vector<Point2i> square_points;
@@ -117,12 +118,13 @@ void get_marker2(Mat img_original, int image_number){
                         Canny_detector_kernel_size, Canny_lowThreshold,
                         Canny_upperThreashold);
 
-  dilate( img_canny, img_canny, Mat(), Point(-1,-1), 4);
-  erode( img_canny, img_canny, Mat(), Point(-1,-1), 4);
-  cvtColor(img_canny, img_hough, CV_GRAY2BGR);
+  img_canny_closed=img_canny.clone();
+  dilate( img_canny_closed, img_canny_closed, Mat(), Point(-1,-1), 2);
+  erode( img_canny_closed, img_canny_closed, Mat(), Point(-1,-1), 2);
+  cvtColor(img_canny_closed, img_hough, CV_GRAY2BGR);
   cvtColor(img_original, img_original, CV_GRAY2BGR);
 
-  HoughLinesP(img_canny, lines, 1, CV_PI/180, Hough_threashold, Hough_minLinLength, Hough_maxLineGap);
+  HoughLinesP(img_canny_closed, lines, 1, CV_PI/180, Hough_threashold, Hough_minLinLength, Hough_maxLineGap);
   intersections=get_intersections(lines);
   // vector<Point2i> square_points=intersections;
   if(intersections.size()>0){
@@ -142,9 +144,28 @@ void get_marker2(Mat img_original, int image_number){
   for( size_t i = 0; i < square_points.size(); i++ )
   {
     Point2f square_point = square_points[i];
-    circle(img_original, square_point, 10, Scalar(0,0,255));
+    circle(img_original, square_point, 10, Scalar(0,0,255), -1);
   }
-  imshow("image"+to_string(image_number)+" detection", img_original);
+  // if(square_points.size()!=6){
+    std::vector<int> params;
+    params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    params.push_back(25);
+    if(image_number<10){
+      imwrite("/home/student/Downloads/output/image0"+to_string(image_number)+"_detection.jpeg", img_original,params);
+      imwrite("/home/student/Downloads/output/image0"+to_string(image_number)+"_canny_original.jpeg", img_canny,params);
+      imwrite("/home/student/Downloads/output/image0"+to_string(image_number)+"_canny_closed.jpeg", img_canny_closed,params);
+    }
+    else{
+      imwrite("/home/student/Downloads/output/image"+to_string(image_number)+"_detection.jpeg", img_original,params);
+      imwrite("/home/student/Downloads/output/image"+to_string(image_number)+"_canny.jpeg", img_canny,params);
+      imwrite("/home/student/Downloads/output/image"+to_string(image_number)+"_canny_closed.jpeg", img_canny_closed,params);
+    }
+    static int count=0;
+    count++;
+    std::cout << count << "\n\n";
+    imshow("image"+to_string(image_number)+" detection", img_original);
+  // }
+
 }
 
 // https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/canny_detector/canny_detector.html
