@@ -188,7 +188,7 @@
     <Property>
      <Name>PreviousOpenDirectory</Name>
      <Value>
-      <String/>
+      <String>../libs/Release/</String>
      </Value>
     </Property>
     <Property>

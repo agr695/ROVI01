@@ -11,7 +11,7 @@
 //constant values
 #define f 823 //pixels
 #define z 0.5 //meters
-#define delta_t 1 //s
+#define delta_t 0.95 //s
 
 //input files path
 #define workcell_path "/home/student/Downloads/ROVI01/final_project/Workcell/ScenePA10RoVi1.wc.xml"
@@ -23,12 +23,12 @@
 #define background_image_path "/home/student/Downloads/ROVI01/final_project/Plugin/backgrounds/color1.ppm"
 
 //output files path
-#define joint_variable_file_1point "../output/joint_1point.txt"
-#define tool_pose_file_1point "../output/tool_pose_1point.txt"
-#define tracking_error_file_1point "../output/tracking_error_1point.txt"
-#define joint_variable_file_3points "../output/joint_3points.txt"
-#define tool_pose_file_3points "../output/tool_pose_3points.txt"
-#define tracking_error_file_3points "../output/tracking_error_3points.txt"
+#define joint_variable_file_1point "../output/joint_1point_fast_95.txt"
+#define tool_pose_file_1point "../output/tool_pose_1point_fast_95.txt"
+#define tracking_error_file_1point "../output/tracking_error_1point_fast_95.txt"
+#define joint_variable_file_3points "../output/joint_3points_fast_95.txt"
+#define tool_pose_file_3points "../output/tool_pose_3points_fast_95.txt"
+#define tracking_error_file_3points "../output/tracking_error_3points_fast_95.txt"
 
 using namespace rw::common;
 using namespace rw::graphics;
@@ -284,7 +284,7 @@ void SamplePlugin::timer() {
         //compute new joint configuration
         rw::math::Vector2D<double> dU=prevU-newU;
         rw::math::Q dq = compute_dq(dU, Zimage_inverse);
-        double dt = (_timer->interval())/1000;
+        double dt = (_timer->interval())/1000.0;
         dq=checkLimits(dq, dt, _device);
 
         //update joint configuration
@@ -364,7 +364,7 @@ void SamplePlugin::timer() {
       	// create joint vector
         rw::math::Q dq(dq_jac.e());
 
-        double dt = (_timer->interval())/1000;
+        double dt = (_timer->interval())/1000.0;
         dq=checkLimits(dq, dt, _device);
 
         //update joint configuration
