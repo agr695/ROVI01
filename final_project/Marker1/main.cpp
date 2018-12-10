@@ -29,23 +29,23 @@ std::pair<double, double> compute_theta(Mat img, int r, int c) {
     for (i = -1; i <= 1; i++) {
         for (j = -1; j <= 1; j++) {
             gxy += img.at<cv::Vec3b>(r + i, c + j)[0] * sobelx[i + 1][j + 1] *
-                   img.at<cv::Vec3b>(r + i, c + j)[0] * sobely[i + 1][j + 1] +
-                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobelx[i + 1][j + 1] *
-                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobely[i + 1][j + 1] +
-                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobelx[i + 1][j + 1] *
-                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobely[i + 1][j + 1];
+                   img.at<cv::Vec3b>(r + i, c + j)[0] * sobely[i + 1][j + 1];
+//                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobelx[i + 1][j + 1] *
+//                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobely[i + 1][j + 1] +
+//                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobelx[i + 1][j + 1] *
+//                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobely[i + 1][j + 1];
             gxx += img.at<cv::Vec3b>(r + i, c + j)[0] * sobelx[i + 1][j + 1] *
-                   img.at<cv::Vec3b>(r + i, c + j)[0] * sobelx[i + 1][j + 1] +
-                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobelx[i + 1][j + 1] *
-                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobelx[i + 1][j + 1] +
-                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobelx[i + 1][j + 1] *
-                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobelx[i + 1][j + 1];
+                   img.at<cv::Vec3b>(r + i, c + j)[0] * sobelx[i + 1][j + 1];
+//                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobelx[i + 1][j + 1] *
+//                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobelx[i + 1][j + 1] +
+//                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobelx[i + 1][j + 1] *
+//                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobelx[i + 1][j + 1];
             gyy += img.at<cv::Vec3b>(r + i, c + j)[0] * sobely[i + 1][j + 1] *
-                   img.at<cv::Vec3b>(r + i, c + j)[0] * sobely[i + 1][j + 1] +
-                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobely[i + 1][j + 1] *
-                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobely[i + 1][j + 1] +
-                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobely[i + 1][j + 1] *
-                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobely[i + 1][j + 1];
+                   img.at<cv::Vec3b>(r + i, c + j)[0] * sobely[i + 1][j + 1];
+//                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobely[i + 1][j + 1] *
+//                   img.at<cv::Vec3b>(r + i, c + j)[1] * sobely[i + 1][j + 1] +
+//                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobely[i + 1][j + 1] *
+//                   img.at<cv::Vec3b>(r + i, c + j)[2] * sobely[i + 1][j + 1];
         }
     }
     theta = 1. / 2 * atan((2 * gxy) / (gxx - gyy));
@@ -205,11 +205,48 @@ int main(int argc, char *argv[]) {
     }
 
     ///Idea for next approach:
-    /// 1. Find max strength pixel in processed_ac
-    /// 2. Add it as circle center
-    /// 3. Set pixel and adjacent pixels strength to 0 to eliminate the already found circle center cluster
-    /// 4. Repeat for 3 more points
-    /// 5. Check if all 4 circle centers are on the marker
+    unsigned long number_of_circles = 50;
+    Point max_point;
+    vector<Point> centers;
+    int row_limit_low, row_limit_high, col_limit_low, col_limit_high;
+    int proximity_limit = int(round(img_original.rows / 6));
+    for (unsigned long circ = 0; circ < number_of_circles; circ++) {
+        /// 1. Find max strength pixel in processed_ac
+        max_point = max_strength(processed_ac);
+        /// 2. Add it as circle center
+        centers.push_back(max_point);
+        /// 3. Set pixel and adjacent pixels strength to 0 to eliminate the already found circle center cluster
+        if (max_point.x <= proximity_limit) {
+            row_limit_low = 0;
+        } else{
+            row_limit_low = max_point.x - proximity_limit;
+        }
+        if (max_point.x + proximity_limit >= img_original.rows) {
+            row_limit_high = img_original.rows;
+        } else{
+            row_limit_high = max_point.x + proximity_limit;
+        }
+        if (max_point.y <= proximity_limit) {
+            col_limit_low = 0;
+        } else{
+            col_limit_low = max_point.y - proximity_limit;
+        }
+        if (max_point.y + proximity_limit >= img_original.cols) {
+            col_limit_high = img_original.cols;
+        } else{
+            col_limit_high = max_point.y + proximity_limit;
+        }
+        for (int repr = row_limit_low; repr < row_limit_high; repr++) {
+            for (int repc = col_limit_low; repc < col_limit_high; repc++ ) {
+                processed_ac[repr][repc] = 0;
+            }
+        }
+        /// 4. Repeat for 3 more points
+    }
+    /// 5. Check if all 3 circle centers are on the marker
+    for (auto &center : centers) {
+        circle(img_processed, Point(center.y, center.x), 10, cvScalar(0, 0, 255, 0), -1);
+    }
 
 ///Possibly reusable code (delete at final version)
 
@@ -274,7 +311,7 @@ int main(int argc, char *argv[]) {
 //        }
 //    }
 //
-//    imwrite("../Results/Marker1_Detection.png", img_processed);
+    imwrite("../Results/Marker1_Detection.png", img_processed);
 
     return 0;
 }

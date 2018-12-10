@@ -14,5 +14,5 @@ if ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "G
 endif ()
 
 # Target executable
-add_executable(FinalProject_Image1 main.cpp)
+add_executable(FinalProject_Image1 opencv_hough.cpp extract_points.h)
 target_link_libraries(FinalProject_Image1 ${OpenCV_LIBS})
